@@ -144,11 +144,11 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="relative z-10 p-4 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-black flex justify-between items-center">
+                <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-black flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onLogout}
-                            className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
+                            className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors px-2"
                         >
                             Sign Out
                         </button>

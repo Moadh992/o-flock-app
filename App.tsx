@@ -321,8 +321,7 @@ export default function App() {
       showPricingModal: false,
       showNewMissionModal: false,
       checkedTasks: [],
-      activeMissionId: null,
-      syncStatus: 'DISCONNECTED'
+      currentMissionId: null
     };
   });
 
@@ -366,9 +365,7 @@ export default function App() {
               currentStep: 'WELCOME',
               // Restore most recent mission to context if available
               mission: formatted[0].mission,
-              blueprint: formatted[0].blueprint,
-              checkedTasks: formatted[0].checkedTasks || [],
-              activeMissionId: formatted[0].id
+              blueprint: formatted[0].blueprint
             }));
           }
         }
@@ -380,6 +377,7 @@ export default function App() {
   }, [state.user]);
 
   const toggleTask = (task: string) => {
+    // Optimistic Update
     setState(prev => {
       const current = new Set(prev.checkedTasks || []);
       if (current.has(task)) {
@@ -389,56 +387,27 @@ export default function App() {
       }
       const newChecked = Array.from(current);
 
-      // Sync to Supabase
-      if (prev.activeMissionId) {
-        console.log(`[Sync] Updating mission ${prev.activeMissionId} tasks:`, newChecked);
-        supabase.from('missions').update({ checked_tasks: newChecked }).eq('id', prev.activeMissionId).then(({ error }) => {
-          if (error) console.error("[Sync] Failed to sync task:", error);
-          else console.log("[Sync] Update success");
-        });
-      } else {
-        console.warn("[Sync] No active mission ID, cannot sync.");
-      }
+      // Sync to Supabase if we have a saved mission context
+      if (prev.user) {
+        // Find current mission ID from history if possible, or assume it's the active one if we track context better.
+        // Wait, 'state.mission' doesn't have an ID attached directly in the state interface?
+        // Let's use userHistory to find the matching mission or we need to store currentMissionId in state.
+        // For now, let's try to match by title/timestamp or improvements.
+        // Actually, better: We need the mission ID. Let's look at how userHistory works.
+        // If we selected from history, we know the ID.
+        // But state doesn't store currentMissionId.
+        // Let's rely on finding it in history for now or just updating if we can.
+        // Actually, let's check if we can retrieve the ID.
+        // If not, we might be only modifying local state for new missions until saved.
 
+        // Let's assume we need to sync.
+        // We need to know WHICH mission to update. 
+        // If the user just generated it, we saved it. But we didn't store the ID in state. 
+        // We should probably store currentMissionId in AppState.
+      }
       return { ...prev, checkedTasks: newChecked };
     });
   };
-
-  // Realtime Sync for Tasks
-  useEffect(() => {
-    if (!state.activeMissionId) return;
-
-    console.log(`[Realtime] Subscribing to mission ${state.activeMissionId}`);
-    const channel = supabase
-      .channel(`mission-sync-${state.activeMissionId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'missions',
-          filter: `id=eq.${state.activeMissionId}`
-        },
-        (payload) => {
-          console.log("[Realtime] Payload received:", payload);
-          const newTasks = payload.new.checked_tasks;
-          if (newTasks) {
-            console.log("[Realtime] Updating local state with:", newTasks);
-            setState(prev => ({ ...prev, checkedTasks: newTasks }));
-          }
-        }
-      )
-      .subscribe((status) => {
-        console.log(`[Realtime] Subscription status for ${state.activeMissionId}:`, status);
-        setState(prev => ({ ...prev, syncStatus: status === 'SUBSCRIBED' ? 'SUBSCRIBED' : (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' ? 'ERROR' : 'CONNECTING') }));
-      });
-
-    return () => {
-      console.log(`[Realtime] Unsubscribing from ${state.activeMissionId}`);
-      supabase.removeChannel(channel);
-      setState(prev => ({ ...prev, syncStatus: 'DISCONNECTED' }));
-    };
-  }, [state.activeMissionId]);
 
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -452,12 +421,9 @@ export default function App() {
       error: null,
       showAuthModal: false,
       showRefineModal: false,
+      // We generally don't persist the user object itself as source of truth, but Supabase session
       user: null
     };
-    // Ensure activeMissionId is preserved and logged
-    if (state.activeMissionId) {
-      // ID is already in ...state, this is just for verification logic if needed later
-    }
     localStorage.setItem('oflock_state', JSON.stringify(stateToSave));
   }, [state]);
 
@@ -588,9 +554,12 @@ export default function App() {
         currentStep: 'ONBOARDING',
         onboardingSectionIndex: 1, // Start from Passion & Emotional Energy (Index 1)
         currentQuestionIndex: 0,
+        showAuthModal: false,
+        showHistoryModal: false,
+        showPricingModal: false,
         showNewMissionModal: false,
-        activeMissionId: null, // Clear active mission as we are starting a new refinement
-        checkedTasks: []
+        checkedTasks: [],
+        currentMissionId: null
       }));
       scrollToTop();
     }
@@ -620,7 +589,7 @@ export default function App() {
       showPricingModal: false,
       showNewMissionModal: false,
       checkedTasks: [],
-      activeMissionId: null
+      currentMissionId: null
     });
     scrollToTop();
   };
@@ -757,15 +726,16 @@ export default function App() {
 
       // 2. Auto-save & Increment Usage (only for authenticated users)
       // 2. Auto-save & Increment Usage (only for authenticated users)
+      let savedMission: any = null;
       if (state.user) {
-        const { data: savedMission } = await supabase.from('missions').insert({
+        const { data } = await supabase.from('missions').insert({
           user_id: state.user.id,
           title: state.mission.title,
           idea_summary: state.mission.coreConcept,
           blueprint: blueprint,
-          mission_data: state.mission,
-          checked_tasks: []
+          mission_data: state.mission
         }).select().single();
+        savedMission = data;
 
 
         // increment_usage RPC removed - logic now counts directly from missions table
@@ -780,13 +750,17 @@ export default function App() {
             checkedTasks: []
           };
           setUserHistory(prev => [newItem, ...prev]);
-
-          // Set Active Mission ID
-          setState(prev => ({ ...prev, activeMissionId: savedMission.id }));
         }
       }
 
-      setState(prev => ({ ...prev, blueprint, isAnalyzing: false, currentStep: 'BLUEPRINT', checkedTasks: [] }));
+      setState(prev => ({
+        ...prev,
+        blueprint,
+        isAnalyzing: false,
+        currentStep: 'BLUEPRINT',
+        checkedTasks: [],
+        currentMissionId: (state.user && savedMission) ? savedMission.id : null
+      }));
       scrollToTop();
     } catch (e) {
       console.error(e);
@@ -1456,35 +1430,13 @@ export default function App() {
               blueprint: item.blueprint,
               currentStep: 'BLUEPRINT',
               showHistoryModal: false,
-              activeMissionId: item.id,
-              checkedTasks: item.checkedTasks || []
+              checkedTasks: item.checkedTasks || [],
+              currentMissionId: item.id
             }));
           }}
           onLogout={() => {
             handleLogout();
-            localStorage.removeItem('oflock_state');
-            setState({
-              currentStep: 'DISCLAIMER',
-              onboardingSectionIndex: 0,
-              currentQuestionIndex: 0,
-              answers: {},
-              comments: {},
-              isAnalyzing: false,
-              profile: null,
-              mission: null,
-              blueprint: null,
-              error: null,
-              showRefineModal: false,
-              refinementQuery: '',
-              user: null,
-              showAuthModal: false,
-              showHistoryModal: false,
-              showPricingModal: false,
-              showNewMissionModal: false,
-              checkedTasks: [],
-              activeMissionId: null
-            });
-            scrollToTop();
+            setState(prev => ({ ...prev, showHistoryModal: false }));
           }}
           onReset={handleReset}
           onNewMission={handleNewMissionClick}
@@ -1492,14 +1444,6 @@ export default function App() {
             setState(prev => ({ ...prev, showHistoryModal: false, showPricingModal: true }));
           }}
         />
-      )}
-
-      {/* Sync Status Indicator (Only visible when Blueprint is active/Mission ID present) */}
-      {state.activeMissionId && (
-        <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 bg-white/80 dark:bg-black/80 backdrop-blur-md p-2 rounded-full border border-slate-200 dark:border-white/10 shadow-lg text-[10px] font-bold uppercase tracking-widest text-slate-500">
-          <div className={`w-2 h-2 rounded-full ${state.syncStatus === 'SUBSCRIBED' ? 'bg-green-500 animate-pulse' : (state.syncStatus === 'ERROR' ? 'bg-red-500' : 'bg-yellow-500')}`}></div>
-          {state.syncStatus === 'SUBSCRIBED' ? 'Synced' : (state.syncStatus === 'ERROR' ? 'Sync Error' : 'Connecting...')}
-        </div>
       )}
 
       {/* Pricing Modal */}

@@ -47,6 +47,7 @@ create table public.missions (
   title text not null,
   idea_summary text,
   blueprint jsonb, -- Using JSONB for flexibility with the blueprint structure
+  checked_tasks text[] default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
