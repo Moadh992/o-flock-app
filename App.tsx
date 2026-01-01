@@ -390,9 +390,13 @@ export default function App() {
 
       // Sync to Supabase
       if (prev.activeMissionId) {
+        console.log(`[Sync] Updating mission ${prev.activeMissionId} tasks:`, newChecked);
         supabase.from('missions').update({ checked_tasks: newChecked }).eq('id', prev.activeMissionId).then(({ error }) => {
-          if (error) console.error("Failed to sync task", error);
+          if (error) console.error("[Sync] Failed to sync task:", error);
+          else console.log("[Sync] Update success");
         });
+      } else {
+        console.warn("[Sync] No active mission ID, cannot sync.");
       }
 
       return { ...prev, checkedTasks: newChecked };
@@ -403,6 +407,7 @@ export default function App() {
   useEffect(() => {
     if (!state.activeMissionId) return;
 
+    console.log(`[Realtime] Subscribing to mission ${state.activeMissionId}`);
     const channel = supabase
       .channel(`mission-sync-${state.activeMissionId}`)
       .on(
@@ -414,15 +419,20 @@ export default function App() {
           filter: `id=eq.${state.activeMissionId}`
         },
         (payload) => {
+          console.log("[Realtime] Payload received:", payload);
           const newTasks = payload.new.checked_tasks;
           if (newTasks) {
+            console.log("[Realtime] Updating local state with:", newTasks);
             setState(prev => ({ ...prev, checkedTasks: newTasks }));
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`[Realtime] Subscription status for ${state.activeMissionId}:`, status);
+      });
 
     return () => {
+      console.log(`[Realtime] Unsubscribing from ${state.activeMissionId}`);
       supabase.removeChannel(channel);
     };
   }, [state.activeMissionId]);
