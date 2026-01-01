@@ -130,6 +130,7 @@ export interface AppState {
   showNewMissionModal: boolean; // For "New Mission" decision from history
   checkedTasks: string[];
   activeMissionId: string | null;
+  syncStatus?: 'CONNECTING' | 'SUBSCRIBED' | 'ERROR' | 'DISCONNECTED';
 }
 
 export interface ReflectionAnswers {

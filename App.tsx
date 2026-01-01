@@ -321,7 +321,8 @@ export default function App() {
       showPricingModal: false,
       showNewMissionModal: false,
       checkedTasks: [],
-      activeMissionId: null
+      activeMissionId: null,
+      syncStatus: 'DISCONNECTED'
     };
   });
 
@@ -429,11 +430,13 @@ export default function App() {
       )
       .subscribe((status) => {
         console.log(`[Realtime] Subscription status for ${state.activeMissionId}:`, status);
+        setState(prev => ({ ...prev, syncStatus: status === 'SUBSCRIBED' ? 'SUBSCRIBED' : (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' ? 'ERROR' : 'CONNECTING') }));
       });
 
     return () => {
       console.log(`[Realtime] Unsubscribing from ${state.activeMissionId}`);
       supabase.removeChannel(channel);
+      setState(prev => ({ ...prev, syncStatus: 'DISCONNECTED' }));
     };
   }, [state.activeMissionId]);
 
@@ -449,9 +452,12 @@ export default function App() {
       error: null,
       showAuthModal: false,
       showRefineModal: false,
-      // We generally don't persist the user object itself as source of truth, but Supabase session
       user: null
     };
+    // Ensure activeMissionId is preserved and logged
+    if (state.activeMissionId) {
+      // ID is already in ...state, this is just for verification logic if needed later
+    }
     localStorage.setItem('oflock_state', JSON.stringify(stateToSave));
   }, [state]);
 
@@ -1486,6 +1492,14 @@ export default function App() {
             setState(prev => ({ ...prev, showHistoryModal: false, showPricingModal: true }));
           }}
         />
+      )}
+
+      {/* Sync Status Indicator (Only visible when Blueprint is active/Mission ID present) */}
+      {state.activeMissionId && (
+        <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 bg-white/80 dark:bg-black/80 backdrop-blur-md p-2 rounded-full border border-slate-200 dark:border-white/10 shadow-lg text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          <div className={`w-2 h-2 rounded-full ${state.syncStatus === 'SUBSCRIBED' ? 'bg-green-500 animate-pulse' : (state.syncStatus === 'ERROR' ? 'bg-red-500' : 'bg-yellow-500')}`}></div>
+          {state.syncStatus === 'SUBSCRIBED' ? 'Synced' : (state.syncStatus === 'ERROR' ? 'Sync Error' : 'Connecting...')}
+        </div>
       )}
 
       {/* Pricing Modal */}
