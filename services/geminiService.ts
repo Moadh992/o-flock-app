@@ -10,9 +10,24 @@ const getClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
-const MODEL_NAME = "gemini-3-pro-preview"; // Using the powerful reasoning model
-const FAST_MODEL_NAME = "gemini-3-flash-preview"; // Fast model for simple tasks
+const MODEL_NAME = "gemini-3-pro-preview";
+const FAST_MODEL_NAME = "gemini-3-flash-preview";
 const THINKING_BUDGET = 32768;
+
+const SYSTEM_COMPONENTS_REFERENCE = `
+### SYSTEM COMPONENTS (DESIGN STANDARDS)
+Use these components as the standard for all apps. They are pre-styled for "Pure Dark" mode and optimized for B2C SaaS.
+
+1. AuthModal: Multi-view (Google/Email) secure authentication.
+2. PricingModal: Premium high-conversion lifetime/subscription offer.
+3. UserHistoryModal: Personal "Founder Space" with usage tracking and mission history.
+
+The styling uses:
+- Background: bg-[#F7F7F5] (Light) / bg-black (Dark)
+- Borders: border-slate-200 / border-white/10
+- Typography: Serif headers (font-serif), sans-serif body.
+- Backdrops: bg-slate-900/60 / bg-black/80 with backdrop-blur-xl.
+`;
 
 export const analyzeProfile = async (answers: UserAnswers): Promise<PsychologicalProfile> => {
   const ai = getClient();
@@ -53,7 +68,7 @@ export const analyzeProfile = async (answers: UserAnswers): Promise<Psychologica
         responseMimeType: "application/json",
         responseSchema: schema,
         thinkingConfig: {
-            thinkingBudget: THINKING_BUDGET,
+          thinkingBudget: THINKING_BUDGET,
         }
       },
     });
@@ -75,52 +90,35 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
   let strategyInstruction = "";
 
   if (priority.includes("Profit")) {
-      strategyInstruction = `
-      STRATEGY MODE: PROFIT FIRST (INDIE SAAS OPTIMIZED)
-      You must acknowledge: "Since you chose Profit First (Indie SaaS)..." in the 'whyFitsYou' field.
-      
-      CORE MANDATE: Optimize for realistic B2C/Prosumer SaaS that can be built in 4 weeks.
-      TARGET MRR: $15 - $35 monthly (Aim for the $25/mo sweet spot).
-      
-      APPROVED CATEGORIES:
-      1. Career & Income Growth (Getting jobs, skills, clients).
-      2. Personal Brand & Content (For creators/founders).
-      3. Personal Productivity/Clarity (Systems, focus, organization).
-      4. Personal Finance (Wealth tracking, investing).
-      5. AI Utility (Tools that replace time/effort).
-      
-      RULES:
-      - REJECT Enterprise B2B (Sales cycles are too long).
-      - REJECT "Nice to have" toys.
-      - MUST be Self-Serve (No sales calls).
-      - MUST be Emotionally Meaningful (Identity improvement).
+    strategyInstruction = `
+      STRATEGY MODE: PROFIT FIRST
+      - Focus: clearly monetizable, practical, SaaS-ready, subscription-friendly, financially solid.
+      - Prioritize recurring revenue and B2C / prosumer focus.
+      - Focus on retention and solving real pain.
+      - Price target: $10–$35/month.
+      - Discard gimmicks immediately.
       `;
   } else if (priority.includes("Creativity")) {
-      strategyInstruction = `
-      STRATEGY MODE: CREATIVITY FIRST
-      You must acknowledge: "Since you chose Creativity First..." in the 'whyFitsYou' field.
-      
-      RULES:
-      1. Originality: Focus on conceptual uniqueness and artistry.
-      2. Emotional Resonance: Prioritize deep emotional or philosophical connection.
-      3. Category Defining: Aim for "never been done before" vibes.
-      4. Monetization: Secondary. It should exist, but do not kill the vibe for it.
+    strategyInstruction = `
+      STRATEGY MODE: CREATIVE EXPLORATION
+      - Focus: emotionally powerful, original, identity-driven, artistic or conceptual.
+      - Must still be meaningful and have purpose.
+      - Users must meaningfully benefit and have a reason to return.
+      - Reject "pretty visualizations" or single-session novelties.
+      - Must allow for emotional depth, art, narrative, and taste.
       `;
   } else {
-      strategyInstruction = `
-      STRATEGY MODE: BALANCED STRATEGY
-      You must acknowledge: "Since you chose Balanced Strategy..." in the 'whyFitsYou' field.
-      
-      RULES:
-      1. Premium Uniqueness: Distinctive creative direction.
-      2. Realistic SaaS Engine: Strong emotional positioning backed by a solid $25/mo business model.
-      3. Harmony: Identity + Profitability.
+    strategyInstruction = `
+      STRATEGY MODE: BALANCED
+      - Focus: creativity + practicality. Something beautiful AND realistically monetizable.
+      - Unique aesthetic or emotional angle but with a real-life ongoing purpose.
+      - Must be repeat-use and avoid visual toys or "one-time wow" tools.
       `;
   }
 
   let nameInstruction = "";
   if (userAppName && userAppName.trim().length > 0) {
-      nameInstruction = `The user has suggested the name: "${userAppName}". Use this name (or a slight variation if needed to make it stronger) for the title.`;
+    nameInstruction = `The user has suggested the name: "${userAppName}". Use this name (or a slight variation if needed to make it stronger) for the title.`;
   }
 
   const prompt = `
@@ -139,11 +137,11 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
     type: Type.OBJECT,
     properties: {
       title: { type: Type.STRING, description: "Bold, commercial, authoritative title." },
-      coreConcept: { type: Type.STRING, description: "The product/service definition. Must include the Revenue Model." },
-      whyFitsYou: { type: Type.STRING, description: "Why they can win here. MUST acknowledge their strategy choice." },
-      sustainability: { type: Type.STRING, description: "Why this business model is sustainable and profitable." },
-      problemSolved: { type: Type.STRING, description: "The specific problem being solved." },
-      yourRole: { type: Type.STRING, description: "The founder's high-leverage role." },
+      coreConcept: { type: Type.STRING, description: "The product/service definition. Include the monetization model." },
+      whyFitsYou: { type: Type.STRING, description: "Who it is for (clear psychological profile) and why it fits the founder." },
+      sustainability: { type: Type.STRING, description: "Emotional connection: Why the founder cares and why users will return repeatedly." },
+      problemSolved: { type: Type.STRING, description: "Meaningful value: The specific problem being solved or the benefit given." },
+      yourRole: { type: Type.STRING, description: "The founder's high-leverage role in this ecosystem." },
     },
     required: ["title", "coreConcept", "whyFitsYou", "sustainability", "problemSolved", "yourRole"],
   };
@@ -157,7 +155,7 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
         responseMimeType: "application/json",
         responseSchema: schema,
         thinkingConfig: {
-            thinkingBudget: THINKING_BUDGET,
+          thinkingBudget: THINKING_BUDGET,
         }
       },
     });
@@ -182,11 +180,11 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
 
   let strategyContext = "";
   if (priority.includes("Profit")) {
-      strategyContext = "PRIORITY: PROFIT FIRST (INDIE SAAS). Focus on self-serve acquisition, $25/mo MRR scaling, and immediate utility.";
+    strategyContext = "STRATEGY: PROFIT FIRST. clearly monetizable, practical, SaaS-ready, subscription-friendly, financially solid. Price target $10-$35/mo. Discard gimmicks immediately.";
   } else if (priority.includes("Creativity")) {
-      strategyContext = "PRIORITY: CREATIVITY FIRST. Focus on brand experience, aesthetic perfection, and emotional connection. Monetization is secondary.";
+    strategyContext = "STRATEGY: CREATIVE EXPLORATION. emotionally powerful, original, identity-driven. Must have purpose and users must meaningfully benefit. No single-session novelties.";
   } else {
-      strategyContext = "PRIORITY: BALANCED. Blend strong design with a solid Indie SaaS business model.";
+    strategyContext = "STRATEGY: BALANCED. creativity + practicality. Something beautiful AND realistically monetizable. Avoid one-time-wow tools.";
   }
 
   const prompt = `
@@ -197,6 +195,8 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
     Profile: ${JSON.stringify(profile)}
     User Aesthetics: Font=${aestheticFont}, Color=${aestheticColor}
     Strategy: ${strategyContext}
+    
+    ${SYSTEM_COMPONENTS_REFERENCE}
     
     REQUIREMENTS:
 
@@ -209,23 +209,23 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
 
     3. Business Execution Layer (PRICING FRAMEWORK):
        - **Monetization**:
-         - 1. Free Plan: Meaningful but limited (e.g., 5 credits/mo).
-         - 2. Core Plan: $25/mo (Unlimited main value, history, premium feel).
-         - 3. Optional Lifetime: $79 - $149 (One-off psychological relief).
-         - "Implement Stripe Checkout".
+         - Define specific pricing tiers. 
+         - Profit mode: $10-$35/mo. 
+         - Creative mode: Must still have a repeat-use monetization reason.
+         - Mention checkout integration (Stripe/Polar).
        - **Landing Page Copy**: Draft real copy.
          - TONE: Cognitive Luxury, Anti-Bloat, Confidence.
        - **Domain**: Suggest 2 premium TLDs (.so, .app, .studio).
        - **Visual Theme**: Finalize high-fidelity aesthetic spec.
          - Theme Name and Intention.
 
-    4. Prompts:
-       - **Replit Agent Prompt**: Optimized for Vibe Coding. Build the MVP.
-       - **Lovable.dev Prompt**: Follow "Prompt Better" guidelines. Focus on conversion-oriented UI.
-       - **Google AI Studio Prompt**: Use the exact XML structure below, but populate it with this mission.
+    4. Prompts (INTEGRATION GUIDELINES):
+       - **Replit Agent Prompt**: Optimized for Vibe Coding. Integrate AuthModal, PricingModal, and UserHistoryModal using the System Components standards. Build the MVP.
+       - **Lovable.dev Prompt**: Follow "Prompt Better" guidelines. Focus on conversion-oriented UI using the provided Modal styling and backdrop standards.
+       - **Google AI Studio Prompt**: Use the exact XML structure below, but Ensure the system instructions reflect the need for Auth and History views.
             <role>You are O'flock, a strategic co-founder AI specializing in the psychology of solopreneurship. You are precise, analytical, and supportive but never hype-driven.</role>
             <instructions>
-            1. **Plan**: Deconstruct user queries into actionable steps that respect the user's need for autonomy and high leverage.
+            1. **Plan**: Deconstruct user queries into actionable steps that integrate user authentication and history.
             2. **Execute**: Provide strategic advice on building '${mission.title}'. Focus on the synthesis of media (writing/brand) and code (SaaS utility).
             3. **Validate**: Ensure every piece of advice aligns with the core value of '${profile.coreDesire}'. If a feature creates a treadmill, reject it.
             </instructions>
@@ -249,6 +249,10 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
 
        - **Notion Prompt**: Dashboard for project management.
        - **GitHub**: Readme description.
+       
+    5. Tech Stack: A list of 4-6 specific technologies/platforms recommended for this mission.
+       - Each item MUST have a 'name', the 'domain' of the tool (e.g. nextjs.org), and a concise 'purpose' (e.g. "Primary Framework", "Authentication & Database", "Transactional Email").
+       - Focus on modern, high-leverage tools (e.g., Supabase, PostHog, Vercel, Resend).
 
     Output a raw JSON object.
   `;
@@ -281,26 +285,39 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
       executionLayer: {
         type: Type.OBJECT,
         properties: {
-            monetization: { type: Type.STRING, description: "Pricing strategy: Free, Core ($25/mo), Lifetime ($79+)." },
-            landingPageCopy: { type: Type.STRING, description: "Real copy: Headline, Positioning, Value, Pricing." },
-            domainRecommendation: { type: Type.STRING, description: "TLD suggestions and DNS instructions." },
-            visualThemeInstructions: { type: Type.STRING, description: "Theme Name, Hex codes, typography, spacing." },
+          monetization: { type: Type.STRING, description: "Pricing strategy: Profit mode target $10-$35/mo. Creative mode must still have monetization possibility." },
+          landingPageCopy: { type: Type.STRING, description: "Positioning-first copy: Headline, Pain/Benefit, Pricing." },
+          domainRecommendation: { type: Type.STRING, description: "TLD suggestions and DNS instructions." },
+          visualThemeInstructions: { type: Type.STRING, description: "Theme Name, Hex codes, typography, spacing." },
         },
         required: ["monetization", "landingPageCopy", "domainRecommendation", "visualThemeInstructions"]
       },
       prompts: {
         type: Type.OBJECT,
         properties: {
-            replit: { type: Type.STRING, description: "Detailed prompt for Replit Agent." },
-            lovable: { type: Type.STRING, description: "Highly detailed Lovable.dev prompt." },
-            googleAI: { type: Type.STRING, description: "XML-structured system prompt for Gemini 3 in AI Studio." },
-            notion: { type: Type.STRING, description: "Prompt to setup the project dashboard." },
-            github: { type: Type.STRING, description: "Description for the Repo Readme." },
+          replit: { type: Type.STRING, description: "Detailed prompt for Replit Agent." },
+          lovable: { type: Type.STRING, description: "Highly detailed Lovable.dev prompt." },
+          googleAI: { type: Type.STRING, description: "XML-structured system prompt for Gemini 3 in AI Studio." },
+          notion: { type: Type.STRING, description: "Prompt to setup the project dashboard." },
+          github: { type: Type.STRING, description: "Description for the Repo Readme." },
         },
         required: ["replit", "lovable", "googleAI", "notion", "github"]
+      },
+      techStack: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING },
+            domain: { type: Type.STRING },
+            purpose: { type: Type.STRING, description: "Short description of what this tool is used for." }
+          },
+          required: ["name", "domain", "purpose"]
+        },
+        description: "List of recommended technologies with their domains for logo fetching."
       }
     },
-    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts"],
+    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack"],
   };
 
   try {
@@ -312,7 +329,7 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
         responseMimeType: "application/json",
         responseSchema: schema,
         thinkingConfig: {
-            thinkingBudget: THINKING_BUDGET,
+          thinkingBudget: THINKING_BUDGET,
         }
       },
     });
@@ -327,14 +344,14 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
 };
 
 export const refineBlueprint = async (
-    currentBlueprint: Blueprint, 
-    mission: Mission, 
-    profile: PsychologicalProfile, 
-    instructions: string
+  currentBlueprint: Blueprint,
+  mission: Mission,
+  profile: PsychologicalProfile,
+  instructions: string
 ): Promise<Blueprint> => {
-    const ai = getClient();
-  
-    const prompt = `
+  const ai = getClient();
+
+  const prompt = `
       Refine the following Execution Blueprint based strictly on the user's new constraints or instructions.
       
       Current Blueprint: ${JSON.stringify(currentBlueprint)}
@@ -345,86 +362,102 @@ export const refineBlueprint = async (
       
       Directives:
       1. Keep the core mission and branding unless explicitly asked to change.
-      2. Update the Action Plan, MVP features, or Tools if the instruction requires it (e.g. "Use free tools only", "Focus on mobile app", "I have no coding skills").
+      2. Update the Action Plan, MVP features, or Tools if the instruction requires it.
+      
+      ${SYSTEM_COMPONENTS_REFERENCE}
       3. Ensure consistency across the JSON.
       4. If the user asks for a pivot in business model, update the Monetization and Marketing sections accordingly.
       
+      5. Tech Stack: Update or maintain the 4-6 specific technologies recommended.
+      
       Output a raw JSON object matching the Blueprint schema.
     `;
-  
-    // Same schema as generateBlueprint to ensure consistency
-    const schema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        actionPlan: {
-          type: Type.OBJECT,
-          properties: {
-            week1: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 1" },
-            week2: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 2" },
-            week3: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 3" },
-            week4: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 4" },
-          },
-          required: ["week1", "week2", "week3", "week4"]
+
+  // Same schema as generateBlueprint to ensure consistency
+  const schema: Schema = {
+    type: Type.OBJECT,
+    properties: {
+      actionPlan: {
+        type: Type.OBJECT,
+        properties: {
+          week1: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 1" },
+          week2: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 2" },
+          week3: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 3" },
+          week4: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of specific checklist tasks for Week 4" },
         },
-        mvpPlan: { type: Type.STRING, description: "Exactly what to build first." },
-        marketingStrategy: { type: Type.STRING, description: "Growth Leverage, Funnels, and Acquisition." },
-        branding: {
-          type: Type.OBJECT,
-          properties: {
-            nameSuggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
-            tagline: { type: Type.STRING },
-            audienceAngle: { type: Type.STRING },
-          },
-          required: ["nameSuggestions", "tagline", "audienceAngle"]
+        required: ["week1", "week2", "week3", "week4"]
+      },
+      mvpPlan: { type: Type.STRING, description: "Exactly what to build first." },
+      marketingStrategy: { type: Type.STRING, description: "Growth Leverage, Funnels, and Acquisition." },
+      branding: {
+        type: Type.OBJECT,
+        properties: {
+          nameSuggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+          tagline: { type: Type.STRING },
+          audienceAngle: { type: Type.STRING },
         },
-        emotionalAnchor: { type: Type.STRING, description: "A reminder using their own words/drivers." },
-        executionLayer: {
-          type: Type.OBJECT,
-          properties: {
-              monetization: { type: Type.STRING, description: "Pricing strategy: Free, Core ($25/mo), Lifetime ($79+)." },
-              landingPageCopy: { type: Type.STRING, description: "Real copy: Headline, Positioning, Value, Pricing." },
-              domainRecommendation: { type: Type.STRING, description: "TLD suggestions and DNS instructions." },
-              visualThemeInstructions: { type: Type.STRING, description: "Theme Name, Hex codes, typography, spacing." },
-          },
-          required: ["monetization", "landingPageCopy", "domainRecommendation", "visualThemeInstructions"]
+        required: ["nameSuggestions", "tagline", "audienceAngle"]
+      },
+      emotionalAnchor: { type: Type.STRING, description: "A reminder using their own words/drivers." },
+      executionLayer: {
+        type: Type.OBJECT,
+        properties: {
+          monetization: { type: Type.STRING, description: "Pricing strategy: Profit mode target $10-$35/mo. Creative mode must still have monetization possibility." },
+          landingPageCopy: { type: Type.STRING, description: "Positioning-first copy: Headline, Pain/Benefit, Pricing." },
+          domainRecommendation: { type: Type.STRING, description: "TLD suggestions and DNS instructions." },
+          visualThemeInstructions: { type: Type.STRING, description: "Theme Name, Hex codes, typography, spacing." },
         },
-        prompts: {
+        required: ["monetization", "landingPageCopy", "domainRecommendation", "visualThemeInstructions"]
+      },
+      prompts: {
+        type: Type.OBJECT,
+        properties: {
+          replit: { type: Type.STRING, description: "Detailed prompt for Replit Agent." },
+          lovable: { type: Type.STRING, description: "Highly detailed Lovable.dev prompt." },
+          googleAI: { type: Type.STRING, description: "XML-structured system prompt for Gemini 3 in AI Studio." },
+          notion: { type: Type.STRING, description: "Prompt to setup the project dashboard." },
+          github: { type: Type.STRING, description: "Description for the Repo Readme." },
+        },
+        required: ["replit", "lovable", "googleAI", "notion", "github"]
+      },
+      techStack: {
+        type: Type.ARRAY,
+        items: {
           type: Type.OBJECT,
           properties: {
-              replit: { type: Type.STRING, description: "Detailed prompt for Replit Agent." },
-              lovable: { type: Type.STRING, description: "Highly detailed Lovable.dev prompt." },
-              googleAI: { type: Type.STRING, description: "XML-structured system prompt for Gemini 3 in AI Studio." },
-              notion: { type: Type.STRING, description: "Prompt to setup the project dashboard." },
-              github: { type: Type.STRING, description: "Description for the Repo Readme." },
+            name: { type: Type.STRING },
+            domain: { type: Type.STRING },
+            purpose: { type: Type.STRING }
           },
-          required: ["replit", "lovable", "googleAI", "notion", "github"]
+          required: ["name", "domain", "purpose"]
+        }
+      }
+    },
+    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack"],
+  };
+
+  try {
+    const response = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: prompt,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION_BASE,
+        responseMimeType: "application/json",
+        responseSchema: schema,
+        thinkingConfig: {
+          thinkingBudget: THINKING_BUDGET,
         }
       },
-      required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts"],
-    };
-  
-    try {
-      const response = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: prompt,
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION_BASE,
-          responseMimeType: "application/json",
-          responseSchema: schema,
-          thinkingConfig: {
-            thinkingBudget: THINKING_BUDGET,
-          }
-        },
-      });
-  
-      const text = response.text;
-      if (!text) throw new Error("No response from AI");
-      return JSON.parse(text) as Blueprint;
-    } catch (error) {
-      console.error("Blueprint Refinement Error:", error);
-      throw error;
-    }
-  };
+    });
+
+    const text = response.text;
+    if (!text) throw new Error("No response from AI");
+    return JSON.parse(text) as Blueprint;
+  } catch (error) {
+    console.error("Blueprint Refinement Error:", error);
+    throw error;
+  }
+};
 
 export const generateNameIdeas = async (answers: UserAnswers): Promise<string[]> => {
   const ai = getClient();
@@ -449,20 +482,20 @@ export const generateNameIdeas = async (answers: UserAnswers): Promise<string[]>
   };
 
   try {
-      const response = await ai.models.generateContent({
-        model: FAST_MODEL_NAME,
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: schema,
-        }
-      });
-      
-      const text = response.text;
-      if (!text) return [];
-      return JSON.parse(text) as string[];
+    const response = await ai.models.generateContent({
+      model: FAST_MODEL_NAME,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: schema,
+      }
+    });
+
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text) as string[];
   } catch (error) {
-      console.error("Name Generation Error:", error);
-      return [];
+    console.error("Name Generation Error:", error);
+    return [];
   }
 };

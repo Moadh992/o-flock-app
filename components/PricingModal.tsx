@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Button } from './Button';
+import React, { useEffect } from 'react';
 
 interface PricingModalProps {
     isOpen: boolean;
@@ -8,18 +7,10 @@ interface PricingModalProps {
 }
 
 export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onSubscribe }) => {
-    const [loading, setLoading] = useState(false);
+
+
 
     if (!isOpen) return null;
-
-    const handleSubscribeClick = () => {
-        setLoading(true);
-        // Simulate API call to Stripe
-        setTimeout(() => {
-            setLoading(false);
-            onSubscribe();
-        }, 1500);
-    };
 
     const CheckItem = ({ text }: { text: string }) => (
         <li className="flex items-start gap-3">
@@ -30,19 +21,23 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onS
         </li>
     );
 
+    // Button styles from Button.tsx
+    const buttonBaseStyles = "px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#F7F7F5] disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]";
+    const buttonPrimaryStyles = "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200 shadow-lg shadow-slate-900/10 focus:ring-slate-900 font-semibold";
+
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"
+                className="absolute inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-xl transition-opacity"
                 onClick={onClose}
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-[#F7F7F5] dark:bg-slate-950 rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden">
+            <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden">
 
                 {/* Header */}
-                <div className="p-8 pb-6 text-center border-b border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900">
+                <div className="p-8 pb-6 text-center border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block">Foundry Access</span>
                     <h2 className="text-3xl font-serif text-slate-900 dark:text-white mb-2">Lifetime Access</h2>
                     <div className="flex items-baseline justify-center gap-1">
@@ -55,7 +50,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onS
                 </div>
 
                 {/* Benefits */}
-                <div className="p-8 bg-[#F7F7F5] dark:bg-slate-950">
+                <div className="p-8 bg-[#F7F7F5] dark:bg-black">
                     <ul className="space-y-4 mb-8">
                         <CheckItem text="Unlimited Mission & Strategy Generations" />
                         <CheckItem text="Deep Dive Blueprint (30-Day Execution Plan)" />
@@ -64,14 +59,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onS
                         <CheckItem text="Priority Strategy Refinement" />
                     </ul>
 
-                    <Button
-                        fullWidth
-                        onClick={handleSubscribeClick}
-                        disabled={loading}
-                        className="shadow-xl shadow-slate-900/10 mb-3"
+                    <a
+                        href="https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_ffVjJ9pmP1vUPN45bNW20eRHBT6uUja5iShSz1YqVy9/redirect"
+                        data-polar-checkout
+                        data-polar-checkout-theme="dark"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${buttonBaseStyles} ${buttonPrimaryStyles} w-full shadow-xl shadow-slate-900/10 mb-3`}
                     >
-                        {loading ? 'Processing...' : 'Get Lifetime Access'}
-                    </Button>
+                        Get Lifetime Access
+                    </a>
 
                     <button
                         onClick={onClose}

@@ -12,6 +12,7 @@ interface UserHistoryModalProps {
     onLogout: () => void;
     onReset: () => void;
     onUpgrade: () => void;
+    onNewMission: () => void;
 }
 
 export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
@@ -23,7 +24,8 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
     onSelect,
     onLogout,
     onReset,
-    onUpgrade
+    onUpgrade,
+    onNewMission
 }) => {
     if (!isOpen) return null;
 
@@ -36,61 +38,66 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-zinc-900/40 backdrop-blur-md transition-opacity"
+                className="absolute inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-xl transition-opacity"
                 onClick={onClose}
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-2xl animate-fade-in-up border border-zinc-200 dark:border-white/10 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-2xl animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col max-h-[85vh]">
 
                 {/* Header */}
-                <div className="p-6 border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900 flex items-center justify-between">
+                <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-zinc-100 overflow-hidden border border-zinc-200">
+                        <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
                             {user.avatarUrl ? (
                                 <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-zinc-500 font-bold text-lg">
+                                <div className="w-full h-full flex items-center justify-center text-slate-500 font-bold text-lg">
                                     {user.name?.charAt(0).toUpperCase()}
                                 </div>
                             )}
                         </div>
                         <div>
-                            <h2 className="text-xl font-serif text-zinc-900 dark:text-white leading-none">{user.name}</h2>
+                            <h2 className="text-xl font-serif text-slate-900 dark:text-white leading-none">{user.name}</h2>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Founder Space</span>
-                                {isPro && <span className="bg-zinc-900 text-white dark:bg-white dark:text-black text-[9px] font-bold px-1.5 py-0.5 rounded">LIFETIME</span>}
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Founder Space</span>
+                                {isPro && <span className="bg-slate-900 dark:bg-white text-white dark:text-black text-[9px] font-bold px-1.5 py-0.5 rounded">LIFETIME</span>}
                             </div>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 transition-colors"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <Button onClick={onNewMission} className="py-2 px-4 shadow-none border-slate-200 hover:border-slate-300 dark:border-white/10 dark:hover:border-white/30 hidden md:flex text-xs h-9">
+                            + New Mission
+                        </Button>
+                        <button
+                            onClick={onClose}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Usage Stats (Only for free users) */}
                 {!isPro && (
-                    <div className="p-6 bg-zinc-50 dark:bg-black border-b border-zinc-200 dark:border-white/10">
+                    <div className="p-6 bg-slate-50 dark:bg-black border-b border-slate-200 dark:border-white/10">
                         <div className="flex justify-between items-end mb-2">
-                            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Free Plan Usage</span>
-                            <span className="text-xs font-mono text-zinc-900 dark:text-white font-bold">{usageCount} / {FREE_LIMIT} Blueprints</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Free Plan Usage</span>
+                            <span className="text-xs font-mono text-slate-900 dark:text-white font-bold">{usageCount} / {FREE_LIMIT} Blueprints</span>
                         </div>
-                        <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden mb-4">
+                        <div className="h-2 w-full bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mb-4">
                             <div
-                                className={`h-full transition-all duration-500 ease-out ${percentageUsed >= 100 ? 'bg-red-500' : 'bg-zinc-900 dark:bg-white'}`}
+                                className={`h-full transition-all duration-500 ease-out ${percentageUsed >= 100 ? 'bg-red-500' : 'bg-slate-900 dark:bg-white'}`}
                                 style={{ width: `${percentageUsed}%` }}
                             ></div>
                         </div>
                         {usageCount >= FREE_LIMIT ? (
-                            <div className="flex items-center justify-between bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 p-3 rounded-lg">
-                                <span className="text-sm text-zinc-600 dark:text-zinc-300">You have reached your limit.</span>
-                                <Button variant="primary" onClick={onUpgrade} className="py-1.5 px-4 text-xs h-auto dark:bg-white dark:text-black">Get Lifetime Access</Button>
+                            <div className="flex items-center justify-between bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-3 rounded-lg">
+                                <span className="text-sm text-slate-600 dark:text-slate-400">You have reached your limit.</span>
+                                <Button variant="primary" onClick={onUpgrade} className="py-1.5 px-4 text-xs h-auto">Get Lifetime Access</Button>
                             </div>
                         ) : (
-                            <p className="text-xs text-zinc-400">
+                            <p className="text-xs text-slate-400">
                                 You have {remaining} free blueprints remaining.
                             </p>
                         )}
@@ -99,10 +106,11 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
 
                 {/* History List */}
                 <div className="flex-1 overflow-y-auto p-6">
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-4">Generated Missions</h3>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Generated Missions</h3>
                     {history.length === 0 ? (
-                        <div className="text-center py-12 border-2 border-dashed border-zinc-200 rounded-xl">
-                            <p className="text-zinc-400 text-sm">No missions generated yet.</p>
+                        <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl">
+                            <p className="text-slate-400 text-sm">No missions generated yet.</p>
+                            <Button onClick={onNewMission} className="mt-4">Start First Mission</Button>
                         </div>
                     ) : (
                         <div className="space-y-3">
@@ -113,20 +121,20 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
                                         onSelect(item);
                                         onClose();
                                     }}
-                                    className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 p-4 rounded-xl hover:border-zinc-400 dark:hover:border-white/20 cursor-pointer transition-all group flex items-center justify-between"
+                                    className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-4 rounded-xl hover:border-slate-400 dark:hover:border-white/30 cursor-pointer transition-all group flex items-center justify-between"
                                 >
                                     <div>
-                                        <h4 className="font-serif text-lg text-zinc-900 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-zinc-200 transition-colors">
+                                        <h4 className="font-serif text-lg text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                             {item.mission.title}
                                         </h4>
-                                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-1 max-w-sm">
+                                        <p className="text-xs text-slate-500 mt-1 line-clamp-1 max-w-sm">
                                             {item.mission.coreConcept}
                                         </p>
-                                        <span className="text-[10px] text-zinc-400 mt-2 block">
+                                        <span className="text-[10px] text-slate-400 mt-2 block">
                                             {new Date(item.timestamp).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-300 group-hover:bg-zinc-900 group-hover:text-white transition-all">
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-slate-900 group-hover:text-white transition-all">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
                                     </div>
                                 </div>
@@ -136,20 +144,19 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900 flex justify-between items-center">
+                <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-black flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onLogout}
-                            className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-600 transition-colors px-2"
+                            className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors px-2"
                         >
                             Sign Out
                         </button>
-
                     </div>
                     {!isPro && (
                         <button
                             onClick={onUpgrade}
-                            className="text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-white hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                            className="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                             Get Lifetime Access
                         </button>

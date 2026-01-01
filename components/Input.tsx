@@ -33,26 +33,50 @@ export const QuestionInput: React.FC<QuestionInputProps> = ({ question, value, c
     }
   };
 
-  const CommentInput = () => (
-    <div className="mt-6 w-full animate-fade-in" style={{ animationDelay: '100ms' }}>
-      <textarea
-        className="w-full bg-transparent border-b border-slate-200 dark:border-slate-800 py-3 text-sm text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:border-slate-900 dark:focus:border-white outline-none transition-colors resize-none font-sans"
-        placeholder="Add context or nuance (optional)..."
-        rows={1}
-        value={comment}
-        onChange={(e) => {
-          onCommentChange(e.target.value);
-          e.target.style.height = 'auto';
-          e.target.style.height = e.target.scrollHeight + 'px';
-        }}
-        onKeyDown={(e) => {
-          // Allow Cmd+Enter in comment too if needed, but usually main input handles it. 
-          // We'll let global listener handle comment field Cmd+Enter unless we want to stop it here.
-          // Leaving as is allows global listener to catch Cmd+Enter here.
-        }}
-      />
-    </div>
-  );
+  return <QuestionInputContent
+    question={question}
+    value={value}
+    comment={comment}
+    onChange={onChange}
+    onCommentChange={onCommentChange}
+    onEnter={onEnter}
+    onAiAssist={onAiAssist}
+    inputRef={inputRef}
+    isGenerating={isGenerating}
+    handleAiClick={handleAiClick}
+    dragActive={dragActive}
+    setDragActive={setDragActive}
+    suggestions={suggestions}
+  />;
+};
+
+const CommentInput = ({ comment, onCommentChange }: { comment: string, onCommentChange: (val: string) => void }) => (
+  <div className="mt-6 w-full animate-fade-in" style={{ animationDelay: '100ms' }}>
+    <textarea
+      className="w-full bg-transparent border-b border-slate-200 dark:border-slate-800 py-3 text-sm text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:border-slate-900 dark:focus:border-white outline-none transition-colors resize-none font-sans"
+      placeholder="Add context or nuance (optional)..."
+      rows={1}
+      value={comment}
+      onChange={(e) => {
+        onCommentChange(e.target.value);
+        e.target.style.height = 'auto';
+        e.target.style.height = e.target.scrollHeight + 'px';
+      }}
+      onKeyDown={(e) => {
+        // Allow Cmd+Enter in comment too if needed, but usually main input handles it. 
+        // We'll let global listener handle comment field Cmd+Enter unless we want to stop it here.
+        // Leaving as is allows global listener to catch Cmd+Enter here.
+      }}
+    />
+  </div>
+);
+
+const QuestionInputContent = ({
+  question, value, comment, onChange, onCommentChange, onEnter, onAiAssist, inputRef, isGenerating, handleAiClick, dragActive, setDragActive, suggestions
+}: any) => {
+
+
+
 
   // --- Visual Card Layout ---
   if (question.type === 'card') {
@@ -103,7 +127,7 @@ export const QuestionInput: React.FC<QuestionInputProps> = ({ question, value, c
           ))}
         </div>
         <div className="max-w-xl mx-auto">
-          <CommentInput />
+          <CommentInput comment={comment} onCommentChange={onCommentChange} />
         </div>
       </div>
     );
@@ -165,7 +189,7 @@ export const QuestionInput: React.FC<QuestionInputProps> = ({ question, value, c
           )}
         </div>
         <div className="max-w-xl mx-auto">
-          <CommentInput />
+          <CommentInput comment={comment} onCommentChange={onCommentChange} />
         </div>
       </div>
     );
@@ -278,7 +302,7 @@ export const QuestionInput: React.FC<QuestionInputProps> = ({ question, value, c
       )}
 
       {/* Optional Context Field for standard questions too */}
-      <CommentInput />
+      <CommentInput comment={comment} onCommentChange={onCommentChange} />
     </div>
   );
 };

@@ -4,7 +4,10 @@ export type AppStep =
   | 'ONBOARDING'
   | 'ANALYSIS'
   | 'MISSION'
-  | 'BLUEPRINT';
+  | 'BLUEPRINT'
+  | 'WELCOME'
+  | 'REFLECTION'
+  | 'LIFESTYLE';
 
 export interface Option {
   label: string;
@@ -103,6 +106,7 @@ export interface Blueprint {
     notion: string;
     github: string;
   };
+  techStack?: { name: string, domain: string, purpose: string }[];
 }
 
 export interface AppState {
@@ -122,4 +126,6 @@ export interface AppState {
   showAuthModal: boolean;
   showHistoryModal: boolean;
   showPricingModal: boolean;
+  showNewMissionModal: boolean; // For "New Mission" decision from history
+  checkedTasks: string[];
 }

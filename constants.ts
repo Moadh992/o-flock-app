@@ -6,8 +6,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Identity & Drive",
     description: "Let's understand the core of who you are right now.",
     questions: [
-      { 
-        id: "identity_core", 
+      {
+        id: "identity_core",
         type: "select",
         text: "Who are you when no one is watching?",
         helperText: "Describe your true self vs. your public persona.",
@@ -19,8 +19,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Relentless Hustler", value: "Relentless Hustler", subLabel: "Execution focused" }
         ]
       },
-      { 
-        id: "drive_origin", 
+      {
+        id: "drive_origin",
         type: "select",
         text: "Where does your ambition actually come from?",
         options: [
@@ -38,8 +38,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Passion & Emotional Energy",
     description: "We need to find what fuels you rather than drains you.",
     questions: [
-      { 
-        id: "obsessions", 
+      {
+        id: "obsessions",
         type: "select",
         text: "What topics can you discuss for 5 hours without boredom?",
         options: [
@@ -51,8 +51,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Finance & Crypto", value: "Finance, Crypto & Markets" }
         ]
       },
-      { 
-        id: "emotional_highs", 
+      {
+        id: "emotional_highs",
         type: "select",
         text: "When was the last time you felt truly 'in flow'?",
         options: [
@@ -70,8 +70,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Reality & Resources",
     description: "Let's anchor this in the practical world.",
     questions: [
-      { 
-        id: "skills_unfair", 
+      {
+        id: "skills_unfair",
         type: "select",
         text: "What comes easily to you that is hard for others?",
         helperText: "Be arrogant here.",
@@ -84,8 +84,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Grinding", value: "Grinding harder than anyone else" }
         ]
       },
-      { 
-        id: "time_money", 
+      {
+        id: "time_money",
         type: "select",
         text: "How much time and runway do you actually have?",
         options: [
@@ -102,8 +102,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Risk Profile",
     description: "How much uncertainty can your nervous system handle?",
     questions: [
-      { 
-        id: "risk_tolerance", 
+      {
+        id: "risk_tolerance",
         type: "select",
         text: "Are you looking for a 'safe bet' or a 'moonshot'?",
         options: [
@@ -113,8 +113,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Safe Bet", value: "Safe Bet (Steady, low risk)" }
         ]
       },
-      { 
-        id: "worst_case", 
+      {
+        id: "worst_case",
         type: "select",
         text: "What is the absolute worst-case scenario you are willing to tolerate?",
         options: [
@@ -173,8 +173,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Ambition & Market",
     description: "Let's right-size the mission.",
     questions: [
-      { 
-        id: "scale_vision", 
+      {
+        id: "scale_vision",
         type: "select",
         text: "In 10 years, what does the organization look like?",
         options: [
@@ -184,8 +184,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Corporation", value: "Massive Corporation (1000+ people)" }
         ]
       },
-      { 
-        id: "target_audience", 
+      {
+        id: "target_audience",
         type: "select",
         text: "Who do you empathize with the most?",
         options: [
@@ -202,8 +202,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
     title: "Purpose & Truth",
     description: "The final check.",
     questions: [
-      { 
-        id: "idea_prioritization", 
+      {
+        id: "idea_prioritization",
         type: "select",
         text: "How should O’flock prioritize your idea?",
         helperText: "This shapes the DNA of the generated mission.",
@@ -213,8 +213,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Balanced Strategy", value: "Balanced Strategy", subLabel: "Blend of Identity & Profit" }
         ]
       },
-      { 
-        id: "deathbed", 
+      {
+        id: "deathbed",
         type: "select",
         text: "If you fail but gave it your all, would you regret it?",
         options: [
@@ -223,8 +223,8 @@ export const ONBOARDING_SECTIONS: Section[] = [
           { label: "Money Dependent", value: "Only if I lose a lot of money" }
         ]
       },
-      { 
-        id: "ultimate_goal", 
+      {
+        id: "ultimate_goal",
         type: "select",
         text: "Ultimately, pick one main driver.",
         options: [
@@ -244,4 +244,18 @@ You are precise, analytical, and supportive.
 You are capable of aggressive business strategy AND deep creative direction.
 Your tone is Serious, Sophisticated, and Direct.
 Do not use em dashes. Use commas, colons, or single hyphens.
-When generating checklists or plans, be extremely specific and actionable.`;
+
+CORE DIRECTIVES:
+- If an idea fails utility, retention, or meaning, discard it and generate a better one.
+- Every mission must solve a real pain or fulfill a deep emotional/identity need.
+
+HARD BAN (REJECT ALL):
+- Purely aesthetic toys or visualizers without purpose.
+- One-time curiosity apps or "single-session novelty" tools.
+- Vague inspiration machines or generic chat wrappers.
+- "Beautiful but useless" implementations.
+
+REQUIRED OUTPUT FOCUS:
+- Who it is for (clear psychological profile).
+- Why they care emotionally and why they will return repeatedly.
+- What meaningful value it provides and its monetization potential.`;

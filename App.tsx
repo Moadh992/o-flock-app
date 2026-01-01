@@ -10,6 +10,9 @@ import { HoverLinkPreview } from './components/HoverLinkPreview';
 import { AuthModal } from './components/AuthModal';
 import { PricingModal } from './components/PricingModal';
 import { ThemeToggle } from './components/ThemeToggle';
+import { WelcomeBackScreen } from './components/WelcomeBackScreen';
+import { ReflectionFlow } from './components/ReflectionFlow';
+import { LifestyleCompanion } from './components/LifestyleCompanion';
 
 
 import { supabase } from './services/supabaseClient';
@@ -151,7 +154,7 @@ const UserProfileWidget = ({ user, onClick }: { user: User, onClick: () => void 
       className="relative z-50 animate-fade-in font-sans"
     >
       <div
-        className="bg-white/90 dark:bg-black/90 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/20 dark:shadow-white/5 rounded-full p-1.5 pr-2 md:pr-4 flex items-center gap-3 transition-all duration-300 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 hover:shadow-2xl hover:scale-105 active:scale-95"
+        className="bg-white/90 dark:bg-black/90 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/20 dark:shadow-white/5 rounded-full p-1.5 pr-2 md:pr-4 flex items-center gap-3 transition-colors duration-300 cursor-pointer hover:border-slate-300 dark:hover:border-white/20"
       >
         <div className="w-10 h-10 bg-gradient-to-br from-slate-100 to-white rounded-full flex items-center justify-center border border-slate-200 text-slate-900 font-serif font-bold text-lg shadow-sm">
           {user.avatarUrl ? (
@@ -173,7 +176,10 @@ const UserProfileWidget = ({ user, onClick }: { user: User, onClick: () => void 
   );
 };
 
-const ToolCard = ({ logo, name, prompt }: { logo: string, name: string, prompt: string }) => {
+const ToolCard = ({ logo, darkLogo, name, prompt, domain }: { logo?: string, darkLogo?: string, name: string, prompt: string, domain?: string }) => {
+  const logoDevToken = 'pk_YBlqx6vUR_mo5wCxEWUzXw';
+  const displayLogo = (domain && !darkLogo) ? `https://img.logo.dev/${domain}?token=${logoDevToken}` : undefined;
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e: React.MouseEvent) => {
@@ -185,7 +191,7 @@ const ToolCard = ({ logo, name, prompt }: { logo: string, name: string, prompt: 
 
   return (
     <div
-      className="group relative w-full border rounded-xl shadow-sm overflow-visible cursor-pointer transition-all flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/30"
+      className="group relative w-full border rounded-xl shadow-sm overflow-visible cursor-pointer transition-all flex items-center justify-between p-4 bg-white dark:bg-black border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/30"
       onClick={handleCopy}
     >
       {/* Tooltip */}
@@ -198,8 +204,19 @@ const ToolCard = ({ logo, name, prompt }: { logo: string, name: string, prompt: 
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-slate-100 dark:border-white/5">
-          <img src={logo} alt={name} className="h-8 w-8 object-contain" />
+        <div className="bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-slate-100 dark:border-white/5 flex items-center justify-center">
+          {displayLogo ? (
+            <>
+              <img src={displayLogo} alt={name} className="h-8 w-8 object-contain" />
+            </>
+          ) : darkLogo ? (
+            <>
+              <img src={logo} alt={name} className="h-8 w-8 object-contain dark:hidden" />
+              <img src={darkLogo} alt={name} className="h-8 w-8 object-contain hidden dark:block" />
+            </>
+          ) : (
+            <img src={logo} alt={name} className="h-8 w-8 object-contain" />
+          )}
         </div>
         <div>
           <span className="font-serif text-lg text-slate-900 dark:text-white block leading-none mb-1">{name}</span>
@@ -215,6 +232,49 @@ const ToolCard = ({ logo, name, prompt }: { logo: string, name: string, prompt: 
   );
 };
 
+// --- Utility Components for Render ---
+
+const Card = ({ title, content, highlight = 'slate', large = false }: { title: string, content: string, highlight?: 'slate' | 'red' | 'blue', large?: boolean }) => {
+  // For light theme, we use subtle borders or background tints
+  const borderColors = {
+    slate: 'border-slate-200 bg-white dark:bg-black dark:border-white/10 dark:text-white',
+    red: 'border-red-100 bg-red-50/50 dark:bg-red-900/10 dark:border-red-500/20',
+    blue: 'border-blue-100 bg-blue-50/50 dark:bg-blue-900/10 dark:border-blue-500/20'
+  };
+  return (
+    <div className={`border ${borderColors[highlight]} p-6 rounded-xl ${large ? 'md:col-span-2' : ''} shadow-sm`}>
+      <h3 className="text-slate-400 text-xs font-bold uppercase mb-3 tracking-wider">{title}</h3>
+      <p className={`text-slate-800 dark:text-slate-200 ${large ? 'text-xl font-serif' : 'text-base'}`}>{content}</p>
+    </div>
+  );
+};
+
+const DetailSection = ({ title, content }: { title: string, content: string }) => (
+  <div className="bg-white dark:bg-black border-l-2 border-slate-900 dark:border-white/20 pl-6 py-4 shadow-sm rounded-r-lg">
+    <h3 className="text-slate-400 dark:text-slate-500 font-bold text-xs uppercase mb-2 tracking-widest">{title}</h3>
+    <p className="text-slate-800 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{content}</p>
+  </div>
+);
+
+const PlanCard = ({ week, tasks, checkedTasks, onToggle }: { week: string; tasks: string[]; checkedTasks: Set<string>; onToggle: (task: string) => void }) => (
+  <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+    <h4 className="text-slate-900 dark:text-white font-bold mb-4 font-serif text-lg">{week}</h4>
+    <ul className="space-y-3">
+      {tasks.map((task, i) => {
+        const isChecked = checkedTasks.has(task);
+        return (
+          <li key={i} className="flex items-start gap-3 group cursor-pointer" onClick={() => onToggle(task)}>
+            <div className={`mt-0.5 w-4 h-4 shrink-0 rounded-sm border flex items-center justify-center transition-all ${isChecked ? 'bg-slate-900 border-slate-900 text-white dark:bg-white dark:border-white dark:text-black' : 'bg-white border-slate-900 dark:bg-slate-950 dark:border-slate-500 group-hover:border-slate-700 dark:group-hover:border-slate-300'}`}>
+              {isChecked && <CheckIcon className="w-3 h-3 text-current" strokeWidth={3} />}
+            </div>
+            <span className={`text-sm leading-relaxed transition-colors ${isChecked ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>{task}</span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+);
+
 
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -224,8 +284,17 @@ export default function App() {
         const saved = localStorage.getItem('oflock_state');
         if (saved) {
           const parsed = JSON.parse(saved);
+
+
+          // Determine initial step for returning users
+          let step = parsed.currentStep;
+          if (parsed.mission) {
+            step = 'WELCOME';
+          }
+
           return {
             ...parsed,
+            currentStep: step,
             isAnalyzing: false,
             error: null,
             showAuthModal: false,
@@ -252,19 +321,21 @@ export default function App() {
       user: null,
       showAuthModal: false,
       showHistoryModal: false,
-      showPricingModal: false
+      showPricingModal: false,
+      showNewMissionModal: false,
+      checkedTasks: []
     };
   });
 
   // History & Usage Data (from Supabase)
   const [userHistory, setUserHistory] = useState<SavedBlueprint[]>([]);
-  const [usageCount, setUsageCount] = useState(0);
+  // usageCount removed, derived from userHistory.length
   const [disclaimerAgreed, setDisclaimerAgreed] = useState(false);
-  const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+  // checkedTasks moved to global state
 
   // Fetch History & Usage when User Changes
   useEffect(() => {
-    if (state.user && !state.user.id.startsWith('guest_')) {
+    if (state.user) {
       const fetchData = async () => {
         // Fetch History
         const { data: historyData } = await supabase
@@ -287,36 +358,35 @@ export default function App() {
             timestamp: item.created_at
           }));
           setUserHistory(formatted);
+
+          // If user has history and is at the start, welcome them back
+          if (formatted.length > 0 && state.currentStep === 'DISCLAIMER') {
+            setState(prev => ({
+              ...prev,
+              currentStep: 'WELCOME',
+              // Restore most recent mission to context if available
+              mission: formatted[0].mission,
+              blueprint: formatted[0].blueprint
+            }));
+          }
         }
 
-        // Fetch Usage
-        const { data: usageData } = await supabase
-          .from('usage_limits')
-          .select('ideas_generated_count')
-          .eq('user_id', state.user!.id)
-          .single();
-
-        if (usageData) {
-          setUsageCount(usageData.ideas_generated_count);
-        }
       };
 
       fetchData();
-    } else {
-      // Reset if logged out or guest
-      setUserHistory([]);
-      setUsageCount(state.user?.id.startsWith('guest_') ? 1 : 0);
     }
   }, [state.user]);
 
   const toggleTask = (task: string) => {
-    const newSet = new Set(checkedTasks);
-    if (newSet.has(task)) {
-      newSet.delete(task);
-    } else {
-      newSet.add(task);
-    }
-    setCheckedTasks(newSet);
+    setState(prev => {
+      const current = new Set(prev.checkedTasks || []);
+      if (current.has(task)) {
+        current.delete(task);
+      } else {
+        current.add(task);
+      }
+      return { ...prev, checkedTasks: Array.from(current) };
+    });
   };
 
 
@@ -374,17 +444,8 @@ export default function App() {
           window.history.replaceState(null, '', window.location.pathname);
         }
       } else {
-        // Only clear user if not manually set (e.g. Guest mode)
-        // But for simplicity, we let the Supabase event drive true auth state, 
-        // and handleLogin drives manual overrides. 
-        // If we are in Guest mode, session is null, but we want to keep the guest user.
-        // We can check if the current user is a 'guest' before clearing.
-        setState(prev => {
-          if (prev.user && prev.user.id.startsWith('guest_')) {
-            return prev;
-          }
-          return { ...prev, user: null };
-        });
+        // Only clear user if no session
+        setState(prev => ({ ...prev, user: null }));
       }
     });
 
@@ -396,6 +457,87 @@ export default function App() {
       scrollRef.current.scrollTop = 0;
     }
     window.scrollTo(0, 0);
+  };
+
+  // --- Lifestyle System Handlers ---
+
+  const handleContinueMission = () => {
+    if (state.blueprint) {
+      setState(prev => ({ ...prev, currentStep: 'BLUEPRINT' }));
+    } else if (state.mission) {
+      setState(prev => ({ ...prev, currentStep: 'MISSION' }));
+    } else {
+      // Fallback
+      setState(prev => ({ ...prev, currentStep: 'WELCOME' }));
+    }
+    scrollToTop();
+  };
+
+  const handleStartReflection = () => {
+    setState(prev => ({ ...prev, currentStep: 'REFLECTION' }));
+    scrollToTop();
+  };
+
+  const handleAnalyzeReflection = (decision: 'STAY' | 'REFINE' | 'PIVOT') => {
+    if (decision === 'STAY') {
+      handleContinueMission();
+    } else if (decision === 'REFINE') {
+      // user stays on mission but opens refine modal immediately? 
+      // or we just go to mission and let them refine there.
+      // For simplicity: Go to Blueprint if exists, else Mission, and maybe auto-open refine?
+      // Let's just go to Mission/Blueprint.
+      handleContinueMission();
+      // optionally set showRefineModal: true
+      setState(prev => ({ ...prev, showRefineModal: true }));
+    } else if (decision === 'PIVOT') {
+      // Pivot: Clear Mission & Blueprint, Keep Profile but allow editing aesthetics/idea
+      setState(prev => ({
+        ...prev,
+        mission: null,
+        blueprint: null,
+        // Clear specific project details so they can enter new ones
+        answers: { ...prev.answers, app_name_idea: '', logo_upload: '' },
+        currentStep: 'ONBOARDING',
+        onboardingSectionIndex: 4, // Jump to Aesthetics & Brand DNA (Index 4)
+        currentQuestionIndex: 0
+      }));
+      scrollToTop();
+    }
+  };
+
+  const handleLogoClick = () => {
+    if (state.user) {
+      // Always try to go to Welcome if logged in. 
+      // The Welcome step renders Disclaimer if no mission exists, which is the correct fallback.
+      setState(prev => ({ ...prev, currentStep: 'WELCOME' }));
+    } else {
+      setState(prev => ({ ...prev, currentStep: 'DISCLAIMER' }));
+    }
+    scrollToTop();
+  };
+
+  const handleNewMissionClick = () => {
+    setState(prev => ({ ...prev, showNewMissionModal: true, showHistoryModal: false }));
+  };
+
+  const handleNewMissionDecision = (type: 'FRESH' | 'REFINE') => {
+    if (type === 'FRESH') {
+      handleReset();
+    } else {
+      // Refine: Keep Profile, Reset Mission/Blueprint
+      setState(prev => ({
+        ...prev,
+        mission: null,
+        blueprint: null,
+        // Clear project specific answers
+        answers: { ...prev.answers, app_name_idea: '', logo_upload: '' },
+        currentStep: 'ONBOARDING',
+        onboardingSectionIndex: 1, // Start from Passion & Emotional Energy (Index 1)
+        currentQuestionIndex: 0,
+        showNewMissionModal: false
+      }));
+      scrollToTop();
+    }
   };
 
   // --- Handlers ---
@@ -419,33 +561,15 @@ export default function App() {
       user: currentUser, // Restore user
       showAuthModal: false,
       showHistoryModal: false,
-      showPricingModal: false
+      showPricingModal: false,
+      showNewMissionModal: false,
+      checkedTasks: []
     });
     scrollToTop();
   };
 
-  const handleLogin = (email: string) => {
-    // Manual override for Guest/Demo login or if Supabase auth flow is bypassed
-    const newUser: User = {
-      id: 'guest_' + Math.random().toString(36).substr(2, 9),
-      email: email,
-      name: 'Guest Founder',
-      createdAt: new Date().toISOString()
-    };
-    setState(prev => ({
-      ...prev,
-      user: newUser,
-      showAuthModal: false
-    }));
-  };
-
   const handleLogout = async () => {
-    // If guest, just clear state
-    if (state.user?.id.startsWith('guest_')) {
-      setState(prev => ({ ...prev, user: null }));
-    } else {
-      await supabase.auth.signOut();
-    }
+    await supabase.auth.signOut();
   };
 
   const triggerSave = () => {
@@ -560,7 +684,7 @@ export default function App() {
     if (!state.mission || !state.profile) return;
 
     // 1. Check Limits (only for authenticated users)
-    if (state.user && !state.user.id.startsWith('guest_')) {
+    if (state.user) {
       const { data: canGenerate } = await supabase.rpc('can_generate_mission', { check_user_id: state.user.id });
       if (canGenerate === false) { // Strict false check
         setState(prev => ({ ...prev, showPricingModal: true }));
@@ -575,18 +699,32 @@ export default function App() {
       const blueprint = await generateBlueprint(state.mission, state.profile, fullContext);
 
       // 2. Auto-save & Increment Usage (only for authenticated users)
-      if (state.user && !state.user.id.startsWith('guest_')) {
-        await supabase.from('missions').insert({
+      // 2. Auto-save & Increment Usage (only for authenticated users)
+      if (state.user) {
+        const { data: savedMission } = await supabase.from('missions').insert({
           user_id: state.user.id,
           title: state.mission.title,
           idea_summary: state.mission.coreConcept,
           blueprint: blueprint,
           mission_data: state.mission
-        });
-        await supabase.rpc('increment_usage', { row_user_id: state.user.id });
+        }).select().single();
+
+
+        // increment_usage RPC removed - logic now counts directly from missions table
+
+
+        if (savedMission) {
+          const newItem: SavedBlueprint = {
+            id: savedMission.id,
+            mission: savedMission.mission_data || state.mission,
+            blueprint: savedMission.blueprint,
+            timestamp: savedMission.created_at
+          };
+          setUserHistory(prev => [newItem, ...prev]);
+        }
       }
 
-      setState(prev => ({ ...prev, blueprint, isAnalyzing: false, currentStep: 'BLUEPRINT' }));
+      setState(prev => ({ ...prev, blueprint, isAnalyzing: false, currentStep: 'BLUEPRINT', checkedTasks: [] }));
       scrollToTop();
     } catch (e) {
       console.error(e);
@@ -650,7 +788,10 @@ export default function App() {
   const renderDisclaimer = () => (
     <div className="max-w-2xl mx-auto space-y-10 animate-fade-in pt-12 flex flex-col justify-center min-h-[60vh] pb-20">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-serif font-medium text-slate-900 dark:text-white tracking-tight leading-tight">
+        <h1
+          onClick={handleLogoClick}
+          className="text-4xl md:text-6xl font-serif font-medium text-slate-900 dark:text-white tracking-tight leading-tight cursor-pointer hover:scale-105 transition-transform"
+        >
           O'flock
         </h1>
         <p className="text-slate-500 dark:text-slate-300 text-lg max-w-md mx-auto font-medium">
@@ -660,33 +801,73 @@ export default function App() {
 
 
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl space-y-6 shadow-xl shadow-slate-200/40 dark:shadow-black/60">
-        <h2 className="text-xl font-serif text-slate-900 dark:text-white border-b border-slate-100 dark:border-white/10 pb-4">
-          Prerequisites
+      <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl space-y-6 shadow-xl shadow-slate-200/40 dark:shadow-black/60">
+        <h2 className="text-xl font-serif text-slate-900 dark:text-white border-b border-slate-100 dark:border-white/10 pb-4 flex items-center gap-2">
+          <span>Prerequisites</span>
+          <span className="text-slate-400 text-xs font-sans font-normal lowercase tracking-tighter">| Before You Begin</span>
         </h2>
-        <ul className="space-y-4 text-slate-600 dark:text-slate-300 text-sm md:text-base">
-          <li className="flex items-start gap-3">
-            <span className="text-red-500 mt-1">●</span>
-            You are not currently emotionally unstable or in crisis.
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-500 mt-1">●</span>
-            You are alone, free from distractions, and not rushed.
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-500 mt-1">●</span>
-            You agree to answer with brutal honesty, no matter how uncomfortable.
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-500 mt-1">●</span>
-            You are willing to commit to the output if it aligns with your truth.
-          </li>
-        </ul>
+
+        <div className="space-y-6">
+          <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed italic">
+            O’Flock is not a place for rushing or shallow answers. It is a space for honesty between you and yourself.
+          </p>
+
+          <div className="grid gap-6">
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-[10px]">1</span>
+                Mentally Present
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed ml-7">
+                Come in with as much mental clarity as possible. If your mind feels heavy or overwhelmed… take a breath, pause for a moment, then continue.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-[10px]">2</span>
+                Physically Comfortable
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed ml-7">
+                If you’re exhausted, hungry, or dehydrated… take care of your body first. A balanced body helps your mind speak honestly.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-[10px]">3</span>
+                No Rush
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed ml-7">
+                Read slowly. Answer truthfully… without exaggeration, without overthinking, and without trying to please a “perfect version” of yourself.
+              </p>
+            </div>
+
+
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-[10px]">5</span>
+                One Idea. Full Presence.
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed ml-7">
+                Stay with one direction at a time. Give the idea space to breathe. Depth appears when attention is not divided.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 dark:border-white/5">
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">Why These Prerequisites Exist</h4>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed">
+              They protect your authenticity — so your answers don’t become distorted by stress, fatigue, or urgency. When you are present… O’Flock understands you better.
+            </p>
+          </div>
+        </div>
 
 
         <div className="pt-2">
           <label className="flex items-center gap-3 cursor-pointer group mb-4">
-            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${disclaimerAgreed ? 'bg-slate-900 border-slate-900 dark:bg-white dark:border-white' : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-600 group-hover:border-slate-400 dark:group-hover:border-slate-500'}`}>
+            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${disclaimerAgreed ? 'bg-slate-900 border-slate-900 dark:bg-white dark:border-white' : 'bg-white dark:bg-black border-slate-300 dark:border-white/20 group-hover:border-slate-400 dark:group-hover:border-white/40'}`}>
               {disclaimerAgreed && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white dark:text-black"><polyline points="20 6 9 17 4 12" /></svg>}
             </div>
             <input
@@ -793,7 +974,7 @@ export default function App() {
     if (!state.profile) return null;
     return (
       <div className="max-w-3xl mx-auto pt-8 pb-20 animate-fade-in">
-        <h2 className="text-3xl md:text-4xl font-serif text-slate-900 mb-8 text-center">Psychological Profile</h2>
+        <h2 className="text-3xl md:text-4xl font-serif text-slate-900 dark:text-white mb-8 text-center">Psychological Profile</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card title="Dominant Motivations" content={state.profile.dominantMotivations} />
@@ -802,13 +983,13 @@ export default function App() {
           <Card title="Core Desire" content={state.profile.coreDesire} highlight="blue" large />
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-8 rounded-2xl mb-8 shadow-lg shadow-slate-200/50 dark:shadow-none">
+        <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-8 rounded-2xl mb-8 shadow-lg shadow-slate-200/50 dark:shadow-none">
           <h3 className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-4 tracking-widest">Analysis Summary</h3>
           <p className="text-slate-800 dark:text-slate-200 leading-loose text-lg font-serif">{state.profile.summary}</p>
         </div>
 
         <div className="text-center">
-          <p className="text-slate-500 mb-6">Does this feel like you? If so, let's find your mission.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">Does this feel like you? If so, let's find your mission.</p>
           <Button onClick={handleGenerateMission} fullWidth>
             Generate My One Mission
           </Button>
@@ -821,11 +1002,11 @@ export default function App() {
         />
 
         {state.showRefineModal && (
-          <div className="fixed top-44 right-6 z-40 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 animate-fade-in-up">
+          <div className="fixed top-44 right-6 z-40 w-80 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 animate-fade-in-up">
             <h3 className="font-serif text-lg mb-2 text-slate-900 dark:text-white">Refine Profile</h3>
             <p className="text-xs text-slate-500 mb-4">Does this profile feel slightly off? Teach O'flock.</p>
             <textarea
-              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white outline-none transition-all resize-none mb-4 h-24"
+              className="w-full bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-lg p-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white outline-none transition-all resize-none mb-4 h-24"
               placeholder="e.g. I am actually more introverted than this..."
             ></textarea>
             <Button fullWidth className="text-sm py-2">Update Profile</Button>
@@ -886,7 +1067,7 @@ export default function App() {
         <h2 className="text-2xl md:text-3xl font-serif text-slate-900 dark:text-white mb-8 text-center">Execution Blueprint</h2>
 
         {/* Emotional Anchor */}
-        <div className="bg-slate-900 dark:bg-slate-900 border border-transparent dark:border-white/10 text-white p-6 md:p-10 rounded-2xl mb-12 text-center shadow-xl shadow-slate-900/20">
+        <div className="bg-slate-900 dark:bg-black border border-transparent dark:border-white/10 text-white p-6 md:p-10 rounded-2xl mb-12 text-center shadow-xl shadow-slate-900/20">
           <h3 className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-4">Your Anchor</h3>
           <p className="text-xl md:text-3xl font-sans font-medium leading-relaxed">"{state.blueprint.emotionalAnchor}"</p>
 
@@ -926,27 +1107,27 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <PlanCard week="Week 1" tasks={state.blueprint.actionPlan.week1} checkedTasks={checkedTasks} onToggle={toggleTask} />
-            <PlanCard week="Week 2" tasks={state.blueprint.actionPlan.week2} checkedTasks={checkedTasks} onToggle={toggleTask} />
-            <PlanCard week="Week 3" tasks={state.blueprint.actionPlan.week3} checkedTasks={checkedTasks} onToggle={toggleTask} />
-            <PlanCard week="Week 4" tasks={state.blueprint.actionPlan.week4} checkedTasks={checkedTasks} onToggle={toggleTask} />
+            <PlanCard week="Week 1" tasks={state.blueprint.actionPlan.week1} checkedTasks={new Set(state.checkedTasks)} onToggle={toggleTask} />
+            <PlanCard week="Week 2" tasks={state.blueprint.actionPlan.week2} checkedTasks={new Set(state.checkedTasks)} onToggle={toggleTask} />
+            <PlanCard week="Week 3" tasks={state.blueprint.actionPlan.week3} checkedTasks={new Set(state.checkedTasks)} onToggle={toggleTask} />
+            <PlanCard week="Week 4" tasks={state.blueprint.actionPlan.week4} checkedTasks={new Set(state.checkedTasks)} onToggle={toggleTask} />
           </div>
         </div>
 
         {/* MVP & Strategy */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
+          <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
             <h3 className="text-lg text-slate-900 dark:text-white font-serif font-bold mb-4">MVP Build Plan</h3>
             <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{state.blueprint.mvpPlan}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
+          <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
             <h3 className="text-lg text-slate-900 dark:text-white font-serif font-bold mb-4">Marketing Strategy</h3>
             <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{state.blueprint.marketingStrategy}</p>
           </div>
         </div>
 
         {/* Branding */}
-        <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl mb-12">
+        <div className="bg-slate-50 dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl mb-12">
           <h3 className="text-lg text-slate-900 dark:text-white font-serif font-bold mb-4">Branding Concept</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -975,12 +1156,12 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <ToolCard
-              logo="https://cm4-production-assets.s3.amazonaws.com/1767083589718-replit.png"
+              domain="replit.com"
               name="Replit"
               prompt={state.blueprint.prompts.replit}
             />
             <ToolCard
-              logo="https://cm4-production-assets.s3.amazonaws.com/1767083687982-lovable.png"
+              domain="lovable.dev"
               name="Lovable"
               prompt={state.blueprint.prompts.lovable}
             />
@@ -988,16 +1169,63 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ToolCard
               logo="https://cm4-production-assets.s3.amazonaws.com/1767108821069-google_ai_studio_icon_july_2025.svg"
+              darkLogo="https://cm4-production-assets.s3.amazonaws.com/1767109442855-aistudio.png"
               name="Google AI Studio"
               prompt={state.blueprint.prompts.googleAI}
             />
             <ToolCard
-              logo="https://cm4-production-assets.s3.amazonaws.com/1767083725433-cursor.png"
+              domain="cursor.com"
               name="Cursor"
               prompt={state.blueprint.prompts.replit} // Re-using replit prompt for Cursor as they are similar build agents
             />
           </div>
         </div>
+
+        {/* Tech Stack */}
+        <div className="mb-16">
+          <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-6">Generated Tech Stack</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">High-leverage technologies recommended for your mission.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {state.blueprint.techStack?.map((tech, idx) => (
+              <div key={idx} className="flex items-center gap-4 p-4 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-2xl hover:border-slate-300 dark:hover:border-white/30 transition-all group group-hover:shadow-lg dark:group-hover:shadow-none">
+                <div className="w-14 h-14 shrink-0 flex items-center justify-center p-2.5 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                  <img
+                    src={`https://img.logo.dev/${tech.domain}?token=pk_YBlqx6vUR_mo5wCxEWUzXw`}
+                    alt={tech.name}
+                    className="w-full h-full object-contain transition-transform group-hover:scale-110"
+                  />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold text-slate-900 dark:text-white truncate">{tech.name}</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5 leading-relaxed">{tech.purpose}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
+
+        {/* Product Hunt Launch Card */}
+        <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-500/20 p-6 md:p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-[#FF6154] rounded-full flex items-center justify-center shrink-0">
+              <span className="text-white font-bold text-3xl pb-1">P</span>
+            </div>
+            <div>
+              <h3 className="text-[#FF6154] font-serif font-bold text-lg mb-1">Launch on Product Hunt</h3>
+              <p className="text-[#FF6154]/80 text-sm">Once you build the MVP, launch it here for maximum visibility.</p>
+            </div>
+          </div>
+          <Button
+            className="!bg-[#FF6154] hover:!bg-[#FF6154]/90 text-white border-none shadow-lg shadow-red-500/20"
+            onClick={() => window.open('https://www.producthunt.com/', '_blank')}
+          >
+            Prepare Launch
+          </Button>
+        </div>
+
 
         {/* Concierge Build CTA */}
         <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
@@ -1029,79 +1257,78 @@ export default function App() {
           isActive={state.showRefineModal}
         />
 
-        {state.showRefineModal && (
-          <div className="fixed top-44 right-6 z-40 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl p-6 animate-fade-in-up">
-            <h3 className="font-serif text-lg mb-2 text-slate-900">Refine Strategy</h3>
-            <p className="text-xs text-slate-500 mb-4">Ask O'flock to adjust the plan based on new constraints.</p>
-            <textarea
-              className="w-full bg-white border border-slate-200 rounded-lg p-3 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-all resize-none mb-4 h-24"
-              placeholder="e.g. I have $0 budget, adjust marketing..."
-              value={state.refinementQuery}
-              onChange={(e) => setState(prev => ({ ...prev, refinementQuery: e.target.value }))}
-            ></textarea>
-            <Button
-              fullWidth
-              className="text-sm py-2"
-              onClick={handleRefineStrategy}
-              disabled={!state.refinementQuery.trim()}
-            >
-              Update Plan
-            </Button>
-          </div>
-        )}
+        {
+          state.showRefineModal && (
+            <div className="fixed top-44 right-6 z-40 w-80 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 animate-fade-in-up">
+              <h3 className="font-serif text-lg mb-2 text-slate-900 dark:text-white">Refine Strategy</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Ask O'flock to adjust the plan based on new constraints.</p>
+              <textarea
+                className="w-full bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-lg p-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white outline-none transition-all resize-none mb-4 h-24"
+                placeholder="e.g. I have $0 budget, adjust marketing..."
+                value={state.refinementQuery}
+                onChange={(e) => setState(prev => ({ ...prev, refinementQuery: e.target.value }))}
+              ></textarea>
+              <Button
+                fullWidth
+                className="text-sm py-2"
+                onClick={handleRefineStrategy}
+                disabled={!state.refinementQuery.trim()}
+              >
+                Update Plan
+              </Button>
+            </div>
+          )
+        }
 
 
       </div>
     );
   };
 
-  // --- Utility Components for Render ---
-
-  const Card = ({ title, content, highlight = 'slate', large = false }: { title: string, content: string, highlight?: 'slate' | 'red' | 'blue', large?: boolean }) => {
-    // For light theme, we use subtle borders or background tints
-    const borderColors = {
-      slate: 'border-slate-200 bg-white dark:bg-slate-900 dark:border-white/10 dark:text-white',
-      red: 'border-red-100 bg-red-50/50 dark:bg-red-900/10 dark:border-red-500/20',
-      blue: 'border-blue-100 bg-blue-50/50 dark:bg-blue-900/10 dark:border-blue-500/20'
-    };
-    return (
-      <div className={`border ${borderColors[highlight]} p-6 rounded-xl ${large ? 'md:col-span-2' : ''} shadow-sm`}>
-        <h3 className="text-slate-400 text-xs font-bold uppercase mb-3 tracking-wider">{title}</h3>
-        <p className={`text-slate-800 dark:text-slate-200 ${large ? 'text-xl font-serif' : 'text-base'}`}>{content}</p>
-      </div>
-    );
-  };
-
-  const DetailSection = ({ title, content }: { title: string, content: string }) => (
-    <div className="bg-white dark:bg-slate-900 border-l-2 border-slate-900 dark:border-white/20 pl-6 py-4 shadow-sm rounded-r-lg">
-      <h3 className="text-slate-400 dark:text-slate-500 font-bold text-xs uppercase mb-2 tracking-widest">{title}</h3>
-      <p className="text-slate-800 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{content}</p>
-    </div>
-  );
-
-  const PlanCard = ({ week, tasks, checkedTasks, onToggle }: { week: string; tasks: string[]; checkedTasks: Set<string>; onToggle: (task: string) => void }) => (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-      <h4 className="text-slate-900 dark:text-white font-bold mb-4 font-serif text-lg">{week}</h4>
-      <ul className="space-y-3">
-        {tasks.map((task, i) => {
-          const isChecked = checkedTasks.has(task);
-          return (
-            <li key={i} className="flex items-start gap-3 group cursor-pointer" onClick={() => onToggle(task)}>
-              <div className={`mt-0.5 w-4 h-4 shrink-0 rounded-sm border flex items-center justify-center transition-all ${isChecked ? 'bg-slate-900 border-slate-900 text-white dark:bg-white dark:border-white dark:text-black' : 'bg-white border-slate-900 dark:bg-slate-950 dark:border-slate-500 group-hover:border-slate-700 dark:group-hover:border-slate-300'}`}>
-                {isChecked && <CheckIcon className="w-3 h-3 text-current" strokeWidth={3} />}
-              </div>
-              <span className={`text-sm leading-relaxed transition-colors ${isChecked ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>{task}</span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
 
   // --- Main Render ---
 
+  const renderContent = () => {
+    switch (state.currentStep) {
+      case 'WELCOME':
+        return state.user && state.mission ? (
+          <WelcomeBackScreen
+            user={state.user}
+            onContinue={handleContinueMission}
+            onReflect={handleStartReflection}
+            onViewHistory={() => setState(prev => ({ ...prev, showHistoryModal: true }))}
+          />
+        ) : renderDisclaimer();
+      case 'REFLECTION':
+        return (
+          <ReflectionFlow
+            onComplete={handleAnalyzeReflection}
+            onCancel={() => setState(prev => ({ ...prev, currentStep: 'WELCOME' }))}
+          />
+        );
+      case 'LIFESTYLE':
+        return (
+          <LifestyleCompanion
+            onClose={() => setState(prev => ({ ...prev, currentStep: 'WELCOME' }))}
+          />
+        );
+      case 'DISCLAIMER':
+        return renderDisclaimer();
+      case 'ONBOARDING':
+        return renderOnboarding();
+      case 'ANALYSIS':
+        return !state.isAnalyzing ? renderAnalysis() : null;
+      case 'MISSION':
+        return !state.isAnalyzing ? renderMission() : null;
+      case 'BLUEPRINT':
+        return !state.isAnalyzing ? renderBlueprint() : null;
+      default:
+        return renderDisclaimer();
+    }
+  };
+
   return (
-    <div className={`min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300 ${['DISCLAIMER', 'ONBOARDING'].includes(state.currentStep) ? 'h-screen overflow-hidden' : ''
+    <div className={`min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300 ${['DISCLAIMER', 'ONBOARDING', 'WELCOME'].includes(state.currentStep) ? 'h-screen overflow-hidden' : ''
       }`} ref={scrollRef}>
       {state.isAnalyzing && (
         <LoadingOverlay
@@ -1117,8 +1344,44 @@ export default function App() {
       <AuthModal
         isOpen={state.showAuthModal}
         onClose={() => setState(prev => ({ ...prev, showAuthModal: false }))}
-        onLogin={handleLogin}
       />
+
+      {/* New Mission Decision Modal */}
+      {state.showNewMissionModal && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm" onClick={() => setState(prev => ({ ...prev, showNewMissionModal: false }))}></div>
+          <div className="relative bg-white dark:bg-black rounded-2xl shadow-2xl w-full max-w-md p-8 border border-slate-200 dark:border-white/10 animate-fade-in-up">
+            <h2 className="text-2xl font-serif text-slate-900 dark:text-white mb-2">New Mission</h2>
+            <p className="text-slate-500 dark:text-slate-400 mb-8">
+              Do you want to start completely fresh, or keep your psychological profile and just refine your idea?
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleNewMissionDecision('REFINE')}
+                className="w-full py-4 px-6 rounded-xl border border-slate-200 dark:border-white/10 hover:border-slate-900 dark:hover:border-white bg-slate-50 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 transition-all text-left group"
+              >
+                <span className="block font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400">Reuse My Profile</span>
+                <span className="block text-xs text-slate-500">Keep your personality analysis. Just enter a new idea/vibe.</span>
+              </button>
+
+              <button
+                onClick={() => handleNewMissionDecision('FRESH')}
+                className="w-full py-4 px-6 rounded-xl border border-transparent hover:bg-red-50 dark:hover:bg-red-900/10 text-left group"
+              >
+                <span className="block font-bold text-slate-900 dark:text-white mb-1 group-hover:text-red-600">Start Fresh</span>
+                <span className="block text-xs text-slate-500">Re-take the personality test and start from scratch.</span>
+              </button>
+            </div>
+            <button
+              onClick={() => setState(prev => ({ ...prev, showNewMissionModal: false }))}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {state.user && (
         <UserHistoryModal
@@ -1126,7 +1389,7 @@ export default function App() {
           onClose={() => setState(prev => ({ ...prev, showHistoryModal: false }))}
           user={state.user}
           history={userHistory}
-          usageCount={usageCount}
+          usageCount={userHistory.length}
           onSelect={(item) => {
             setState(prev => ({
               ...prev,
@@ -1141,6 +1404,7 @@ export default function App() {
             setState(prev => ({ ...prev, showHistoryModal: false }));
           }}
           onReset={handleReset}
+          onNewMission={handleNewMissionClick}
           onUpgrade={() => {
             setState(prev => ({ ...prev, showHistoryModal: false, showPricingModal: true }));
           }}
@@ -1167,7 +1431,7 @@ export default function App() {
       {/* Header */}
       <header className="fixed top-0 w-full bg-[#F7F7F5]/80 dark:bg-black/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 z-40 transition-all duration-300">
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={handleReset}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={handleLogoClick}>
             <span className="font-serif font-bold text-2xl tracking-tight text-slate-900 dark:text-white">O'flock</span>
           </div>
           <div className="flex items-center gap-4">
@@ -1194,11 +1458,7 @@ export default function App() {
           </div>
         )}
 
-        {state.currentStep === 'DISCLAIMER' && renderDisclaimer()}
-        {state.currentStep === 'ONBOARDING' && renderOnboarding()}
-        {(state.currentStep === 'ANALYSIS' && !state.isAnalyzing) && renderAnalysis()}
-        {(state.currentStep === 'MISSION' && !state.isAnalyzing) && renderMission()}
-        {(state.currentStep === 'BLUEPRINT' && !state.isAnalyzing) && renderBlueprint()}
+        {renderContent()}
       </main>
 
 
