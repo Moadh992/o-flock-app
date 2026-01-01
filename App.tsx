@@ -287,10 +287,7 @@ export default function App() {
 
 
           // Determine initial step for returning users
-          let step = parsed.currentStep;
-          if (parsed.mission) {
-            step = 'WELCOME';
-          }
+          const step = parsed.currentStep;
 
           return {
             ...parsed,
@@ -323,7 +320,8 @@ export default function App() {
       showHistoryModal: false,
       showPricingModal: false,
       showNewMissionModal: false,
-      checkedTasks: []
+      checkedTasks: [],
+      activeMissionId: null
     };
   });
 
@@ -355,7 +353,8 @@ export default function App() {
               yourRole: ''
             },
             blueprint: item.blueprint,
-            timestamp: item.created_at
+            timestamp: item.created_at,
+            checkedTasks: item.checked_tasks || []
           }));
           setUserHistory(formatted);
 
@@ -366,7 +365,9 @@ export default function App() {
               currentStep: 'WELCOME',
               // Restore most recent mission to context if available
               mission: formatted[0].mission,
-              blueprint: formatted[0].blueprint
+              blueprint: formatted[0].blueprint,
+              checkedTasks: formatted[0].checkedTasks || [],
+              activeMissionId: formatted[0].id
             }));
           }
         }
@@ -385,9 +386,46 @@ export default function App() {
       } else {
         current.add(task);
       }
-      return { ...prev, checkedTasks: Array.from(current) };
+      const newChecked = Array.from(current);
+
+      // Sync to Supabase
+      if (prev.activeMissionId) {
+        supabase.from('missions').update({ checked_tasks: newChecked }).eq('id', prev.activeMissionId).then(({ error }) => {
+          if (error) console.error("Failed to sync task", error);
+        });
+      }
+
+      return { ...prev, checkedTasks: newChecked };
     });
   };
+
+  // Realtime Sync for Tasks
+  useEffect(() => {
+    if (!state.activeMissionId) return;
+
+    const channel = supabase
+      .channel(`mission-sync-${state.activeMissionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'missions',
+          filter: `id=eq.${state.activeMissionId}`
+        },
+        (payload) => {
+          const newTasks = payload.new.checked_tasks;
+          if (newTasks) {
+            setState(prev => ({ ...prev, checkedTasks: newTasks }));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [state.activeMissionId]);
 
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -534,7 +572,9 @@ export default function App() {
         currentStep: 'ONBOARDING',
         onboardingSectionIndex: 1, // Start from Passion & Emotional Energy (Index 1)
         currentQuestionIndex: 0,
-        showNewMissionModal: false
+        showNewMissionModal: false,
+        activeMissionId: null, // Clear active mission as we are starting a new refinement
+        checkedTasks: []
       }));
       scrollToTop();
     }
@@ -563,7 +603,8 @@ export default function App() {
       showHistoryModal: false,
       showPricingModal: false,
       showNewMissionModal: false,
-      checkedTasks: []
+      checkedTasks: [],
+      activeMissionId: null
     });
     scrollToTop();
   };
@@ -706,7 +747,8 @@ export default function App() {
           title: state.mission.title,
           idea_summary: state.mission.coreConcept,
           blueprint: blueprint,
-          mission_data: state.mission
+          mission_data: state.mission,
+          checked_tasks: []
         }).select().single();
 
 
@@ -718,9 +760,13 @@ export default function App() {
             id: savedMission.id,
             mission: savedMission.mission_data || state.mission,
             blueprint: savedMission.blueprint,
-            timestamp: savedMission.created_at
+            timestamp: savedMission.created_at,
+            checkedTasks: []
           };
           setUserHistory(prev => [newItem, ...prev]);
+
+          // Set Active Mission ID
+          setState(prev => ({ ...prev, activeMissionId: savedMission.id }));
         }
       }
 
@@ -1325,7 +1371,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300 ${['DISCLAIMER', 'ONBOARDING', 'WELCOME'].includes(state.currentStep) ? 'h-screen overflow-hidden' : ''
+    <div className={`min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300 ${['DISCLAIMER', 'ONBOARDING', 'WELCOME'].includes(state.currentStep) ? 'md:h-screen md:overflow-hidden' : ''
       }`} ref={scrollRef}>
       {state.isAnalyzing && (
         <LoadingOverlay
@@ -1393,7 +1439,9 @@ export default function App() {
               mission: item.mission,
               blueprint: item.blueprint,
               currentStep: 'BLUEPRINT',
-              showHistoryModal: false
+              showHistoryModal: false,
+              activeMissionId: item.id,
+              checkedTasks: item.checkedTasks || []
             }));
           }}
           onLogout={() => {

@@ -48,6 +48,25 @@ export interface User {
   createdAt: string;
 }
 
+export interface SavedBlueprint {
+  id: string;
+  mission: Mission;
+  blueprint: Blueprint;
+  timestamp: string;
+}
+
+export interface PsychologicalProfile {
+  dominantMotivations: string;
+  psychologicalDrivers: string;
+  fearPatterns: string;
+  energySources: string;
+  workingStyle: string;
+  constraints: string;
+  desireThemes: string;
+  coreDesire: string; // Money, Impact, Respect, etc.
+  summary: string;
+}
+
 export interface Mission {
   title: string;
   coreConcept: string;
@@ -90,26 +109,6 @@ export interface Blueprint {
   techStack?: { name: string, domain: string, purpose: string }[];
 }
 
-export interface SavedBlueprint {
-  id: string;
-  mission: Mission;
-  blueprint: Blueprint;
-  timestamp: string;
-  checkedTasks?: string[];
-}
-
-export interface PsychologicalProfile {
-  dominantMotivations: string;
-  psychologicalDrivers: string;
-  fearPatterns: string;
-  energySources: string;
-  workingStyle: string;
-  constraints: string;
-  desireThemes: string;
-  coreDesire: string; // Money, Impact, Respect, etc.
-  summary: string;
-}
-
 export interface AppState {
   currentStep: AppStep;
   onboardingSectionIndex: number;
@@ -129,12 +128,4 @@ export interface AppState {
   showPricingModal: boolean;
   showNewMissionModal: boolean; // For "New Mission" decision from history
   checkedTasks: string[];
-  activeMissionId: string | null;
-}
-
-export interface ReflectionAnswers {
-  resonance: string; // 'deeply' | 'somewhat' | 'no'
-  action: string;    // 'started' | 'planned' | 'nothing'
-  why: string;       // 'none' | 'disbelief' | 'complexity' | 'distraction' | 'skills'
-  feeling: string;   // Text input
 }
