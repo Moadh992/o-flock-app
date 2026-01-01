@@ -1446,7 +1446,29 @@ export default function App() {
           }}
           onLogout={() => {
             handleLogout();
-            setState(prev => ({ ...prev, showHistoryModal: false }));
+            localStorage.removeItem('oflock_state');
+            setState({
+              currentStep: 'DISCLAIMER',
+              onboardingSectionIndex: 0,
+              currentQuestionIndex: 0,
+              answers: {},
+              comments: {},
+              isAnalyzing: false,
+              profile: null,
+              mission: null,
+              blueprint: null,
+              error: null,
+              showRefineModal: false,
+              refinementQuery: '',
+              user: null,
+              showAuthModal: false,
+              showHistoryModal: false,
+              showPricingModal: false,
+              showNewMissionModal: false,
+              checkedTasks: [],
+              activeMissionId: null
+            });
+            scrollToTop();
           }}
           onReset={handleReset}
           onNewMission={handleNewMissionClick}
