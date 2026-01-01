@@ -46,7 +46,7 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
             <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-2xl animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col max-h-[85vh]">
 
                 {/* Header */}
-                <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black flex items-center justify-between">
+                <div className="p-4 md:p-6 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
                             {user.avatarUrl ? (
@@ -80,7 +80,7 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
 
                 {/* Usage Stats (Only for free users) */}
                 {!isPro && (
-                    <div className="p-6 bg-slate-50 dark:bg-black border-b border-slate-200 dark:border-white/10">
+                    <div className="p-4 md:p-6 bg-slate-50 dark:bg-black border-b border-slate-200 dark:border-white/10">
                         <div className="flex justify-between items-end mb-2">
                             <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Free Plan Usage</span>
                             <span className="text-xs font-mono text-slate-900 dark:text-white font-bold">{usageCount} / {FREE_LIMIT} Blueprints</span>
@@ -105,7 +105,7 @@ export const UserHistoryModal: React.FC<UserHistoryModalProps> = ({
                 )}
 
                 {/* History List */}
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6">
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Generated Missions</h3>
                     {history.length === 0 ? (
                         <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl">

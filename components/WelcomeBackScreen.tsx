@@ -16,7 +16,7 @@ export const WelcomeBackScreen: React.FC<WelcomeBackScreenProps> = ({
     onViewHistory
 }) => {
     return (
-        <div className="max-w-xl mx-auto space-y-12 animate-fade-in py-20 min-h-[70vh] flex flex-col justify-center">
+        <div className="max-w-xl mx-auto space-y-12 animate-fade-in py-12 md:py-20 min-h-[70vh] flex flex-col justify-center">
             <div className="text-center space-y-4">
                 <h1 className="text-4xl md:text-5xl font-serif font-medium text-slate-900 dark:text-white tracking-tight">
                     Welcome Back, {user.name ? user.name.split(' ')[0] : 'Founder'}

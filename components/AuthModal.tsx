@@ -70,7 +70,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-white dark:bg-black rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in-up border border-zinc-100 dark:border-white/10 overflow-hidden">
+            <div className="relative bg-white dark:bg-black rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8 animate-fade-in-up border border-zinc-100 dark:border-white/10 overflow-hidden max-h-[85vh] overflow-y-auto md:overflow-hidden md:max-h-none">
 
                 {/* Decorative Top Gradient */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-slate-900 to-transparent dark:via-white/50"></div>

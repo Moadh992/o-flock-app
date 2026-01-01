@@ -53,7 +53,7 @@ export const QuestionInput: React.FC<QuestionInputProps> = ({ question, value, c
 const CommentInput = ({ comment, onCommentChange }: { comment: string, onCommentChange: (val: string) => void }) => (
   <div className="mt-6 w-full animate-fade-in" style={{ animationDelay: '100ms' }}>
     <textarea
-      className="w-full bg-transparent border-b border-slate-200 dark:border-slate-800 py-3 text-sm text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:border-slate-900 dark:focus:border-white outline-none transition-colors resize-none font-sans"
+      className="w-full bg-transparent border-b border-slate-200 dark:border-slate-800 py-3 text-base md:text-sm text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:border-slate-900 dark:focus:border-white outline-none transition-colors resize-none font-sans"
       placeholder="Add context or nuance (optional)..."
       rows={1}
       value={comment}

@@ -34,10 +34,10 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onS
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden">
+            <div className="relative bg-[#F7F7F5] dark:bg-black rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up border border-slate-200 dark:border-white/10 overflow-hidden max-h-[85vh] overflow-y-auto md:overflow-hidden md:max-h-none">
 
                 {/* Header */}
-                <div className="p-8 pb-6 text-center border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black">
+                <div className="p-6 md:p-8 pb-6 text-center border-b border-slate-200 dark:border-white/10 bg-white dark:bg-black">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block">Foundry Access</span>
                     <h2 className="text-3xl font-serif text-slate-900 dark:text-white mb-2">Lifetime Access</h2>
                     <div className="flex items-baseline justify-center gap-1">
@@ -50,7 +50,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onS
                 </div>
 
                 {/* Benefits */}
-                <div className="p-8 bg-[#F7F7F5] dark:bg-black">
+                <div className="p-6 md:p-8 bg-[#F7F7F5] dark:bg-black">
                     <ul className="space-y-4 mb-8">
                         <CheckItem text="Unlimited Mission & Strategy Generations" />
                         <CheckItem text="Deep Dive Blueprint (30-Day Execution Plan)" />

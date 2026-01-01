@@ -68,7 +68,7 @@ const LumosWidget = () => (
     href="https://www.lumosmagency.com/"
     previewImage="https://i.ibb.co/3y7KpQXq/image.png"
     imageAlt="Lumos Systems Agency"
-    className="fixed bottom-6 right-6 z-50 animate-fade-in block no-underline"
+    className="fixed bottom-6 right-6 z-50 animate-fade-in hidden md:block no-underline"
   >
     <div className="bg-white/90 dark:bg-black/90 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/20 dark:shadow-white/5 rounded-full p-1.5 pr-5 flex items-center gap-3 cursor-pointer group">
       <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 group-hover:bg-white transition-colors">
@@ -100,7 +100,7 @@ const RefineWidget = ({ onClick, isActive }: { onClick: () => void, isActive: bo
   </div>
 );
 
-const LofiWidget = () => {
+const LofiWidget = ({ expanded = false }: { expanded?: boolean }) => {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -132,7 +132,7 @@ const LofiWidget = () => {
         <div className={`w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center border border-slate-800 text-white transition-all ${playing ? 'shadow-lg shadow-blue-500/20' : ''}`}>
           {playing ? <PauseIcon /> : <PlayIcon />}
         </div>
-        <div className="hidden md:flex flex-col text-left">
+        <div className={`${expanded ? 'flex' : 'hidden'} md:flex flex-col text-left`}>
           <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold leading-none">Focus Mode</span>
           <span className="text-sm font-serif font-bold text-slate-900 dark:text-white leading-none mt-1 min-w-[60px]">
             {playing ? (
@@ -788,10 +788,7 @@ export default function App() {
   const renderDisclaimer = () => (
     <div className="max-w-2xl mx-auto space-y-10 animate-fade-in pt-12 flex flex-col justify-center min-h-[60vh] pb-20">
       <div className="text-center space-y-4">
-        <h1
-          onClick={handleLogoClick}
-          className="text-4xl md:text-6xl font-serif font-medium text-slate-900 dark:text-white tracking-tight leading-tight cursor-pointer hover:scale-105 transition-transform"
-        >
+        <h1 className="text-4xl md:text-6xl font-serif font-medium text-slate-900 dark:text-white tracking-tight leading-tight">
           O'flock
         </h1>
         <p className="text-slate-500 dark:text-slate-300 text-lg max-w-md mx-auto font-medium">
@@ -857,8 +854,8 @@ export default function App() {
           </div>
 
           <div className="pt-4 border-t border-slate-100 dark:border-white/5">
-            <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">Why These Prerequisites Exist</h4>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed">
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2 hidden md:block">Why These Prerequisites Exist</h4>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed hidden md:block">
               They protect your authenticity — so your answers don’t become distorted by stress, fatigue, or urgency. When you are present… O’Flock understands you better.
             </p>
           </div>
@@ -1428,13 +1425,22 @@ export default function App() {
         }}
       />
 
+      <div className="fixed top-6 left-6 z-50 animate-fade-in hidden md:block">
+        <ThemeToggle />
+      </div>
+
       {/* Header */}
       <header className="fixed top-0 w-full bg-[#F7F7F5]/80 dark:bg-black/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 z-40 transition-all duration-300">
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={handleLogoClick}>
-            <span className="font-serif font-bold text-2xl tracking-tight text-slate-900 dark:text-white">O'flock</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={handleLogoClick}>
+              <span className="font-serif font-bold text-2xl tracking-tight text-slate-900 dark:text-white">O'flock</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
             {state.user ? (
               // User is logged in, UserProfileWidget will handle display
               <UserProfileWidget user={state.user} onClick={() => setState(prev => ({ ...prev, showHistoryModal: true }))} />
@@ -1463,12 +1469,15 @@ export default function App() {
 
 
 
-      <div className="fixed top-6 left-6 z-50 animate-fade-in block">
-        <ThemeToggle />
+
+
+      {/* LofiWidget handles its own visibility (hidden on mobile landing, visible in onboarding) */}
+      <div className={`${state.currentStep === "ONBOARDING" ? "block" : "hidden md:block"}`}>
+        <LofiWidget expanded={state.currentStep === "ONBOARDING"} />
       </div>
 
-      <LofiWidget />
-      {state.currentStep === 'DISCLAIMER' && <LumosWidget />}
+      {/* LumosWidget handles its own visibility (hidden on mobile, visible on desktop) */}
+      {state.currentStep !== 'ONBOARDING' && <LumosWidget />}
     </div>
   );
 }
