@@ -13,6 +13,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { WelcomeBackScreen } from './components/WelcomeBackScreen';
 import { ReflectionFlow } from './components/ReflectionFlow';
 import { LifestyleCompanion } from './components/LifestyleCompanion';
+import { LumosWidget } from './components/LumosWidget';
 
 
 import { supabase } from './services/supabaseClient';
@@ -62,29 +63,41 @@ const LogOutIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
 );
 
-
-const LumosWidget = () => (
-  <HoverLinkPreview
-    href="https://www.lumosmagency.com/"
-    previewImage="https://i.ibb.co/3y7KpQXq/image.png"
-    imageAlt="Lumos Systems Agency"
-    className="fixed bottom-6 right-6 z-50 animate-fade-in hidden md:block no-underline"
-  >
-    <div className="bg-white/90 dark:bg-black/90 backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-xl shadow-slate-200/20 dark:shadow-white/5 rounded-full p-1.5 pr-5 flex items-center gap-3 cursor-pointer group">
-      <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 group-hover:bg-white transition-colors">
-        <img
-          src="https://cm4-production-assets.s3.amazonaws.com/1767082639160-studio__1_-removebg-preview.png"
-          alt="Lumos Logo"
-          className="w-6 h-6 object-contain"
-        />
-      </div>
-      <div className="flex flex-col text-left">
-        <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold leading-none">Backed By</span>
-        <span className="text-sm font-serif font-bold text-slate-900 dark:text-white leading-none mt-1 group-hover:text-black dark:group-hover:text-white transition-colors">Lumos Systems</span>
-      </div>
-    </div>
-  </HoverLinkPreview>
+const CursorIcon = () => (
+  <svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 466.73 532.09" className="w-5 h-5 fill-current transition-colors">
+    <path d="M457.43,125.94L244.42,2.96c-6.84-3.95-15.28-3.95-22.12,0L9.3,125.94c-5.75,3.32-9.3,9.46-9.3,16.11v247.99c0,6.65,3.55,12.79,9.3,16.11l213.01,122.98c6.84,3.95,15.28,3.95,22.12,0l213.01-122.98c5.75-3.32,9.3-9.46,9.3-16.11v-247.99c0-6.65-3.55-12.79-9.3-16.11h-.01ZM444.05,151.99l-205.63,356.16c-1.39,2.4-5.06,1.42-5.06,1.36v-233.21c0-4.66-2.49-8.97-6.53-11.31L24.87,145.67c-2.4-1.39-1.42-5.06,1.36-5.06h411.26c5.84,0,9.49,6.33,6.57,11.39h-.01Z" />
+  </svg>
 );
+
+const WindsurfIcon = () => (
+  <svg viewBox="0 0 1024 1024" className="w-5 h-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg">
+    <path d="M897.246 286.869H889.819C850.735 286.808 819.017 318.46 819.017 357.539V515.589C819.017 547.15 792.93 572.716 761.882 572.716C743.436 572.716 725.02 563.433 714.093 547.85L552.673 317.304C539.28 298.16 517.486 286.747 493.895 286.747C457.094 286.747 423.976 318.034 423.976 356.657V515.619C423.976 547.181 398.103 572.746 366.842 572.746C348.335 572.746 329.949 563.463 319.021 547.881L138.395 289.882C134.316 284.038 125.154 286.93 125.154 294.052V431.892C125.154 438.862 127.285 445.619 131.272 451.34L309.037 705.2C319.539 720.204 335.033 731.344 352.9 735.392C397.616 745.557 438.77 711.135 438.77 667.278V508.406C438.77 476.845 464.339 451.279 495.904 451.279H495.995C515.02 451.279 532.857 460.562 543.785 476.145L705.235 706.661C718.659 725.835 739.327 737.218 763.983 737.218C801.606 737.218 833.841 705.9 833.841 667.308V508.376C833.841 476.815 859.41 451.249 890.975 451.249H890.975C890.975 451.249 890.975 451.249 890.975 451.249H897.276C901.233 451.249 904.43 448.053 904.43 444.097V294.021C904.43 290.065 901.233 286.869 897.276 286.869H897.246Z" />
+  </svg>
+);
+
+const LovableIcon = () => (
+  <svg viewBox="0 0 121 122" className="w-5 h-5 transition-opacity" xmlns="http://www.w3.org/2000/svg">
+    <mask id="b_app" width="121" height="122" x="0" y="0" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }}><path fill="url(#a_app)" fillRule="evenodd" d="M36.069 0c19.92 0 36.068 16.155 36.068 36.084v13.713h12.004c19.92 0 36.069 16.156 36.069 36.084 0 19.928-16.149 36.083-36.069 36.083H0v-85.88C0 16.155 16.148 0 36.069 0Z" clipRule="evenodd" /></mask>
+    <g mask="url(#b_app)">
+      <ellipse cx="52.738" cy="65.101" fill="#4B73FF" rx="81.373" ry="81.192" />
+      <ellipse cx="61.673" cy="20.547" fill="#FF66F4" rx="104.216" ry="81.192" />
+      <ellipse cx="78.666" cy="5.268" fill="#FF0105" rx="81.373" ry="71.304" />
+      <ellipse cx="63.121" cy="20.527" fill="#FE7B02" rx="48.937" ry="48.829" />
+    </g>
+    <defs>
+      <linearGradient id="a_app" x1="40.453" x2="76.933" y1="21.433" y2="121.971" gradientUnits="userSpaceOnUse"><stop offset=".025" stopColor="#FF8E63" /><stop offset=".56" stopColor="#FF7EB0" /><stop offset=".95" stopColor="#4B73FF" /></linearGradient>
+    </defs>
+  </svg>
+);
+
+const ReplitIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 1.5A1.5 1.5 0 0 1 3.5 0h7A1.5 1.5 0 0 1 12 1.5V7H3.5A1.5 1.5 0 0 1 2 5.5v-4zM12 8.5V14h8.5a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5V8.5zM2 18.5a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5V24H3.5A1.5 1.5 0 0 1 2 22.5v-4z" />
+  </svg>
+);
+
+
+
 
 const RefineWidget = ({ onClick, isActive }: { onClick: () => void, isActive: boolean }) => (
   <div onClick={onClick} className="fixed top-24 right-6 z-40 animate-fade-in cursor-pointer">
@@ -176,9 +189,9 @@ const UserProfileWidget = ({ user, onClick }: { user: User, onClick: () => void 
   );
 };
 
-const ToolCard = ({ logo, darkLogo, name, prompt, domain }: { logo?: string, darkLogo?: string, name: string, prompt: string, domain?: string }) => {
+const ToolCard = ({ logo, darkLogo, name, prompt, domain, renderLogo: RenderLogo }: { logo?: string, darkLogo?: string, name: string, prompt: string, domain?: string, renderLogo?: React.FC }) => {
   const logoDevToken = 'pk_YBlqx6vUR_mo5wCxEWUzXw';
-  const displayLogo = (domain && !darkLogo) ? `https://img.logo.dev/${domain}?token=${logoDevToken}` : undefined;
+  const displayLogo = (domain && !darkLogo && !RenderLogo) ? `https://img.logo.dev/${domain}?token=${logoDevToken}` : undefined;
 
   const [copied, setCopied] = useState(false);
 
@@ -204,8 +217,10 @@ const ToolCard = ({ logo, darkLogo, name, prompt, domain }: { logo?: string, dar
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-slate-100 dark:border-white/5 flex items-center justify-center">
-          {displayLogo ? (
+        <div className="bg-slate-50 dark:bg-white/5 p-2 rounded-lg border border-slate-100 dark:border-white/5 flex items-center justify-center min-w-[40px]">
+          {RenderLogo ? (
+            <RenderLogo />
+          ) : displayLogo ? (
             <>
               <img src={displayLogo} alt={name} className="h-8 w-8 object-contain" />
             </>
@@ -219,14 +234,19 @@ const ToolCard = ({ logo, darkLogo, name, prompt, domain }: { logo?: string, dar
           )}
         </div>
         <div>
-          <span className="font-serif text-lg text-slate-900 dark:text-white block leading-none mb-1">{name}</span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold">Integration</span>
+          <span className="font-serif text-lg text-slate-900 dark:text-white block leading-none">{name}</span>
         </div>
       </div>
 
       <div className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest transition-colors ${copied ? 'text-green-500' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
-        {copied ? <CheckIcon /> : <CopyIcon />}
-        <span className="hidden md:inline">{copied ? 'Copied' : 'Copy'}</span>
+        {copied ? (
+          <>
+            <CheckIcon />
+            <span className="hidden md:inline">Copied</span>
+          </>
+        ) : (
+          <CopyIcon />
+        )}
       </div>
     </div>
   );
@@ -1184,33 +1204,59 @@ export default function App() {
 
         {/* Tools */}
         <div className="mb-16">
-          <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-6">Tool Integration Prompts</h3>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Hover over the platform to copy the optimized build prompt.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+              <h3 className="text-3xl text-slate-900 dark:text-white font-serif font-bold">Vibecoding Integration</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Optimized build prompts for the most powerful AI development tools.</p>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <ToolCard
-              domain="replit.com"
+              renderLogo={ReplitIcon}
               name="Replit"
               prompt={state.blueprint.prompts.replit}
             />
             <ToolCard
-              domain="lovable.dev"
+              renderLogo={LovableIcon}
               name="Lovable"
               prompt={state.blueprint.prompts.lovable}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <ToolCard
-              logo="https://cm4-production-assets.s3.amazonaws.com/1767108821069-google_ai_studio_icon_july_2025.svg"
-              darkLogo="https://cm4-production-assets.s3.amazonaws.com/1767109442855-aistudio.png"
-              name="Google AI Studio"
-              prompt={state.blueprint.prompts.googleAI}
-            />
-            <ToolCard
-              domain="cursor.com"
+              renderLogo={CursorIcon}
               name="Cursor"
-              prompt={state.blueprint.prompts.replit} // Re-using replit prompt for Cursor as they are similar build agents
+              prompt={state.blueprint.prompts.replit}
             />
+            <ToolCard
+              renderLogo={WindsurfIcon}
+              name="Windsurf"
+              prompt={state.blueprint.prompts.replit}
+            />
+          </div>
+        </div>
+
+        {/* Execution Strategy */}
+        <div className="mb-16">
+          <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-6">Business Strategy</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
+              <h4 className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-4 tracking-widest">Monetization</h4>
+              <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">{state.blueprint.executionLayer.monetization}</p>
+            </div>
+            <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm">
+              <h4 className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-4 tracking-widest">Domain & Branding</h4>
+              <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">{state.blueprint.executionLayer.domainRecommendation}</p>
+            </div>
+            <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm md:col-span-2">
+              <h4 className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-4 tracking-widest">Landing Page Logic</h4>
+              <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">{state.blueprint.executionLayer.landingPageCopy}</p>
+            </div>
+            <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl shadow-sm md:col-span-2">
+              <h4 className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold mb-4 tracking-widest">Visual Identity</h4>
+              <p className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">{state.blueprint.executionLayer.visualThemeInstructions}</p>
+            </div>
           </div>
         </div>
 
