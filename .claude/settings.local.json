@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun create:*)",
+      "Bash(powershell -c \"irm bun.sh/install.ps1 | iex\")",
+      "Bash(powershell -c \"Get-ChildItem ''C:\\\\Users\\\\amoad\\\\OneDrive\\\\Documents\\\\GitHub\\\\o-flock-app'' -Name\")",
+      "Bash(powershell -c \"cd ''C:\\\\Users\\\\amoad\\\\OneDrive\\\\Documents\\\\GitHub\\\\o-flock-app''; & ''C:\\\\Users\\\\amoad\\\\.bun\\\\bin\\\\bun.exe'' create video@latest my-video\")",
+      "Bash(npx create-video@latest my-video --template=blank)",
+      "Bash(npx degit remotion-dev/template my-video)",
+      "Bash(npm run dev:*)"
+    ]
+  }
+}

@@ -842,19 +842,8 @@ export default function App() {
   // --- Render Steps ---
 
   const renderDisclaimer = () => (
-    <div className="max-w-2xl mx-auto space-y-10 animate-fade-in pt-12 flex flex-col justify-center min-h-[60vh] pb-20">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-serif font-medium text-slate-900 dark:text-white tracking-tight leading-tight">
-          O'flock
-        </h1>
-        <p className="text-slate-500 dark:text-slate-300 text-lg max-w-md mx-auto font-medium">
-          Silence the noise. Execute the signal.
-        </p>
-      </div>
-
-
-
-      <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 md:p-8 rounded-2xl space-y-6 shadow-xl shadow-slate-200/40 dark:shadow-black/60">
+    <div className="max-w-2xl mx-auto space-y-6 md:space-y-10 animate-fade-in pt-6 md:pt-12 px-4 md:px-0 pb-20 overflow-y-auto">
+      <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-4 sm:p-6 md:p-8 rounded-xl md:rounded-2xl space-y-4 md:space-y-6 shadow-xl shadow-slate-200/40 dark:shadow-black/60">
         <h2 className="text-xl font-serif text-slate-900 dark:text-white border-b border-slate-100 dark:border-white/10 pb-4 flex items-center gap-2">
           <span>Prerequisites</span>
           <span className="text-slate-400 text-xs font-sans font-normal lowercase tracking-tighter">| Before You Begin</span>
