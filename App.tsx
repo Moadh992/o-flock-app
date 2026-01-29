@@ -17,6 +17,8 @@ import { LumosWidget } from './components/LumosWidget';
 
 
 import { supabase } from './services/supabaseClient';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 // Icons
 const CheckIcon = ({ className = "", strokeWidth = 2 }: { className?: string, strokeWidth?: number }) => (
@@ -96,8 +98,14 @@ const ReplitIcon = () => (
   </svg>
 );
 
-
-
+const PdfIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <path d="M10 11h4" />
+    <path d="M10 15h4" />
+  </svg>
+);
 
 const RefineWidget = ({ onClick, isActive }: { onClick: () => void, isActive: boolean }) => (
   <div onClick={onClick} className="fixed top-24 right-6 z-40 animate-fade-in cursor-pointer">
@@ -957,7 +965,7 @@ export default function App() {
     const canGoBack = state.onboardingSectionIndex > 0 || state.currentQuestionIndex > 0;
 
     return (
-      <div className="w-full flex flex-col min-h-[calc(100vh-80px)] justify-center">
+      <div className="w-full flex flex-col pt-16 pb-8">
         {/* Progress Fixed at Top */}
         <div className="fixed top-20 left-0 w-full z-30 bg-[#F7F7F5]/80 dark:bg-black/90 backdrop-blur-sm pt-4 pb-2 px-4 md:px-6 border-b border-transparent dark:border-white/5">
           <div className="max-w-6xl mx-auto">
@@ -1145,8 +1153,71 @@ export default function App() {
       window.open('https://notion.so/new', '_blank');
     };
 
+    const exportToPdf = async () => {
+      const element = document.getElementById('blueprint-content');
+      if (!element) return;
+
+      try {
+        // Show loading state
+        setState(prev => ({ ...prev, isLoading: true }));
+
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: document.documentElement.classList.contains('dark') ? '#000000' : '#ffffff',
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+
+        // Calculate total pages needed
+        const scaledHeight = imgHeight * ratio;
+        const pageHeight = pdfHeight - 20; // Leave some margin
+        const totalPages = Math.ceil(scaledHeight / pageHeight);
+
+        for (let page = 0; page < totalPages; page++) {
+          if (page > 0) {
+            pdf.addPage();
+          }
+
+          const srcY = (page * pageHeight * imgWidth) / (pdfWidth);
+          const srcHeight = Math.min((pageHeight * imgWidth) / pdfWidth, imgHeight - srcY);
+
+          // Create a temporary canvas for this page segment
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = imgWidth;
+          pageCanvas.height = srcHeight;
+          const ctx = pageCanvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(canvas, 0, srcY, imgWidth, srcHeight, 0, 0, imgWidth, srcHeight);
+            const pageImgData = pageCanvas.toDataURL('image/png');
+            pdf.addImage(pageImgData, 'PNG', imgX, 10, imgWidth * ratio, srcHeight * ratio);
+          }
+        }
+
+        const fileName = `blueprint-${state.mission?.title?.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() || 'export'}.pdf`;
+        pdf.save(fileName);
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+      } finally {
+        setState(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+
     return (
-      <div className="max-w-4xl mx-auto pt-8 pb-20 animate-fade-in relative">
+      <div id="blueprint-content" className="max-w-4xl mx-auto pt-8 pb-20 animate-fade-in relative">
         <h2 className="text-2xl md:text-3xl font-serif text-slate-900 dark:text-white mb-8 text-center">Execution Blueprint</h2>
 
         {/* Emotional Anchor */}
@@ -1183,6 +1254,9 @@ export default function App() {
               30-Day Action Plan
             </h3>
             <div className="flex gap-2">
+              <Button variant="secondary" onClick={exportToPdf} className="text-xs py-2 px-4 h-auto gap-2 dark:!bg-white dark:!text-black dark:!border-white dark:hover:!bg-slate-200 shadow-lg shadow-black/20">
+                <PdfIcon /> Export PDF
+              </Button>
               <Button variant="secondary" onClick={copyPlanToNotion} className="text-xs py-2 px-4 h-auto gap-2 dark:!bg-white dark:!text-black dark:!border-white dark:hover:!bg-slate-200 shadow-lg shadow-black/20">
                 <NotionIcon /> Add to Notion
               </Button>
@@ -1567,8 +1641,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300 ${['DISCLAIMER', 'ONBOARDING', 'WELCOME'].includes(state.currentStep) ? 'md:h-screen md:overflow-hidden' : ''
-      }`} ref={scrollRef}>
+    <div className="min-h-screen bg-[#F7F7F5] dark:bg-black text-slate-900 dark:text-white font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300" ref={scrollRef}>
       {state.isAnalyzing && (
         <LoadingOverlay
           message={
@@ -1700,7 +1773,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="pt-20 px-4 md:px-6 max-w-6xl mx-auto min-h-screen pb-12">
+      <main className="pt-20 px-4 md:px-6 max-w-6xl mx-auto pb-12">
         {state.error && (
           <div className="max-w-xl mx-auto mb-8 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-center shadow-sm mt-8">
             {state.error}

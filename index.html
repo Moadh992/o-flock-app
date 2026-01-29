@@ -62,9 +62,22 @@
     }
   </script>
   <style>
+    html {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+
     body {
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
       background-color: #F7F7F5;
       color: #000000;
+    }
+
+    #root {
+      min-height: 100vh;
     }
 
     /* Custom scrollbar for a sleek look */
@@ -76,13 +89,25 @@
       background: #F7F7F5;
     }
 
+    .dark ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
     ::-webkit-scrollbar-thumb {
       background: #d4d4d4;
       border-radius: 4px;
     }
 
+    .dark ::-webkit-scrollbar-thumb {
+      background: #404040;
+    }
+
     ::-webkit-scrollbar-thumb:hover {
       background: #a3a3a3;
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #525252;
     }
   </style>
   <script type="importmap">
