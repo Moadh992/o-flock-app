@@ -84,6 +84,37 @@ export interface ExecutionLayer {
   visualThemeInstructions: string;
 }
 
+// Paul Graham Framework: Lean Canvas for hypothesis validation
+export interface LeanCanvas {
+  problem: string[];           // Top 3 problems to validate
+  customerSegments: string;    // Early adopters to target
+  uniqueValueProp: string;     // Single clear message
+  solution: string[];          // Top 3 features for MVP
+  unfairAdvantage: string;     // What can't be copied
+  revenueStreams: string;      // Pricing model
+  costStructure: string;       // Key costs to track
+  keyMetrics: string[];        // Numbers that matter
+  channels: string[];          // Path to customers
+}
+
+// Paul Graham Framework: "Do Things That Don't Scale" early tactics
+export interface EarlyTractionTactics {
+  manualOutreach: string[];      // Specific outreach actions
+  personalOnboarding: string;    // How to onboard first 10 users
+  founderSelling: string;        // Direct sales approach
+  communityEngagement: string;   // Where to find early users
+  feedbackLoops: string;         // How to collect and act on feedback
+}
+
+// Design Thinking stages for iteration
+export interface IterationCycle {
+  empathize: string;    // How to understand users deeply
+  define: string;       // Problem statement refinement
+  ideate: string;       // Solution brainstorming approach
+  prototype: string;    // What to build for testing
+  test: string;         // How to validate with users
+}
+
 export interface Blueprint {
   actionPlan: {
     week1: string[];
@@ -108,6 +139,11 @@ export interface Blueprint {
     github: string;
   };
   techStack?: { name: string, domain: string, purpose: string }[];
+  // Paul Graham Framework additions
+  leanCanvas?: LeanCanvas;
+  earlyTraction?: EarlyTractionTactics;
+  iterationCycle?: IterationCycle;
+  founderProblemFit?: string;  // How this solves the founder's own problem
 }
 
 export interface AppState {

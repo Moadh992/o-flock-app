@@ -1091,6 +1091,12 @@ export default function App() {
     const copyPlanToNotion = () => {
       if (!state.blueprint) return;
       let text = `# Execution Blueprint: ${state.mission?.title}\n\n`;
+
+      // Founder-Problem Fit
+      if (state.blueprint.founderProblemFit) {
+        text += `## Why You Should Build This\n${state.blueprint.founderProblemFit}\n\n`;
+      }
+
       text += `## 30-Day Plan\n\n`;
 
       ['week1', 'week2', 'week3', 'week4'].forEach((key) => {
@@ -1099,6 +1105,41 @@ export default function App() {
         weekTasks.forEach((task) => text += `- [ ] ${task}\n`);
         text += `\n`;
       });
+
+      // Lean Canvas
+      if (state.blueprint.leanCanvas) {
+        text += `## Lean Canvas\n\n`;
+        text += `### Problems to Validate\n`;
+        state.blueprint.leanCanvas.problem.forEach((p) => text += `- ${p}\n`);
+        text += `\n### MVP Features\n`;
+        state.blueprint.leanCanvas.solution.forEach((s) => text += `- ${s}\n`);
+        text += `\n### Key Metrics\n`;
+        state.blueprint.leanCanvas.keyMetrics.forEach((m) => text += `- ${m}\n`);
+        text += `\n### Early Adopters\n${state.blueprint.leanCanvas.customerSegments}\n`;
+        text += `\n### Unfair Advantage\n${state.blueprint.leanCanvas.unfairAdvantage}\n`;
+        text += `\n### Value Proposition\n${state.blueprint.leanCanvas.uniqueValueProp}\n\n`;
+      }
+
+      // Early Traction
+      if (state.blueprint.earlyTraction) {
+        text += `## Do Things That Don't Scale\n\n`;
+        text += `### Manual Outreach (First 10 Users)\n`;
+        state.blueprint.earlyTraction.manualOutreach.forEach((action, i) => text += `${i + 1}. ${action}\n`);
+        text += `\n### Personal Onboarding\n${state.blueprint.earlyTraction.personalOnboarding}\n`;
+        text += `\n### Founder Selling\n${state.blueprint.earlyTraction.founderSelling}\n`;
+        text += `\n### Community Engagement\n${state.blueprint.earlyTraction.communityEngagement}\n`;
+        text += `\n### Feedback Loops\n${state.blueprint.earlyTraction.feedbackLoops}\n\n`;
+      }
+
+      // Iteration Cycle
+      if (state.blueprint.iterationCycle) {
+        text += `## Iteration Cycle (Design Thinking)\n\n`;
+        text += `1. **Empathize**: ${state.blueprint.iterationCycle.empathize}\n`;
+        text += `2. **Define**: ${state.blueprint.iterationCycle.define}\n`;
+        text += `3. **Ideate**: ${state.blueprint.iterationCycle.ideate}\n`;
+        text += `4. **Prototype**: ${state.blueprint.iterationCycle.prototype}\n`;
+        text += `5. **Test**: ${state.blueprint.iterationCycle.test}\n\n`;
+      }
 
       navigator.clipboard.writeText(text);
       window.open('https://notion.so/new', '_blank');
@@ -1248,6 +1289,136 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Paul Graham Framework: Founder-Problem Fit */}
+        {state.blueprint.founderProblemFit && (
+          <div className="mb-16">
+            <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-6">Why You Should Build This</h3>
+            <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-500/20 p-6 md:p-8 rounded-2xl">
+              <p className="text-amber-900 dark:text-amber-200 text-sm leading-relaxed">{state.blueprint.founderProblemFit}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Paul Graham Framework: Lean Canvas */}
+        {state.blueprint.leanCanvas && (
+          <div className="mb-16">
+            <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-2">Lean Canvas</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Validate these hypotheses before building. Paul Graham says: launch fast, learn faster.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-red-600 dark:text-red-400 uppercase font-bold mb-3 tracking-widest">Problems to Validate</h4>
+                <ul className="space-y-2">
+                  {state.blueprint.leanCanvas.problem.map((p, i) => (
+                    <li key={i} className="text-slate-700 dark:text-slate-300 text-sm flex items-start gap-2">
+                      <span className="text-red-500 mt-0.5">•</span> {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-green-600 dark:text-green-400 uppercase font-bold mb-3 tracking-widest">MVP Features Only</h4>
+                <ul className="space-y-2">
+                  {state.blueprint.leanCanvas.solution.map((s, i) => (
+                    <li key={i} className="text-slate-700 dark:text-slate-300 text-sm flex items-start gap-2">
+                      <span className="text-green-500 mt-0.5">•</span> {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-blue-600 dark:text-blue-400 uppercase font-bold mb-3 tracking-widest">Key Metrics</h4>
+                <ul className="space-y-2">
+                  {state.blueprint.leanCanvas.keyMetrics.map((m, i) => (
+                    <li key={i} className="text-slate-700 dark:text-slate-300 text-sm flex items-start gap-2">
+                      <span className="text-blue-500 mt-0.5">•</span> {m}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-purple-600 dark:text-purple-400 uppercase font-bold mb-3 tracking-widest">Early Adopters</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">{state.blueprint.leanCanvas.customerSegments}</p>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-amber-600 dark:text-amber-400 uppercase font-bold mb-3 tracking-widest">Unfair Advantage</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm">{state.blueprint.leanCanvas.unfairAdvantage}</p>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+                <h4 className="text-xs text-cyan-600 dark:text-cyan-400 uppercase font-bold mb-3 tracking-widest">Channels</h4>
+                <ul className="space-y-1">
+                  {state.blueprint.leanCanvas.channels.map((c, i) => (
+                    <li key={i} className="text-slate-700 dark:text-slate-300 text-sm">• {c}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 p-5 rounded-2xl">
+              <h4 className="text-xs text-slate-600 dark:text-slate-400 uppercase font-bold mb-3 tracking-widest">Value Proposition</h4>
+              <p className="text-slate-900 dark:text-white text-lg font-serif">{state.blueprint.leanCanvas.uniqueValueProp}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Paul Graham Framework: Early Traction ("Do Things That Don't Scale") */}
+        {state.blueprint.earlyTraction && (
+          <div className="mb-16">
+            <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-2">Do Things That Don't Scale</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Paul Graham's secret: manual, unscalable tactics to get your first 10 users.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 rounded-2xl">
+                <h4 className="text-xs text-orange-600 dark:text-orange-400 uppercase font-bold mb-4 tracking-widest">Manual Outreach (First 10 Users)</h4>
+                <ul className="space-y-3">
+                  {state.blueprint.earlyTraction.manualOutreach.map((action, i) => (
+                    <li key={i} className="text-slate-700 dark:text-slate-300 text-sm flex items-start gap-3">
+                      <span className="w-5 h-5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                      {action}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 rounded-2xl">
+                <h4 className="text-xs text-pink-600 dark:text-pink-400 uppercase font-bold mb-4 tracking-widest">Personal Onboarding</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.blueprint.earlyTraction.personalOnboarding}</p>
+                <h4 className="text-xs text-pink-600 dark:text-pink-400 uppercase font-bold mb-4 mt-6 tracking-widest">Founder Selling</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.blueprint.earlyTraction.founderSelling}</p>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 rounded-2xl">
+                <h4 className="text-xs text-indigo-600 dark:text-indigo-400 uppercase font-bold mb-4 tracking-widest">Community Engagement</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.blueprint.earlyTraction.communityEngagement}</p>
+              </div>
+              <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-6 rounded-2xl">
+                <h4 className="text-xs text-teal-600 dark:text-teal-400 uppercase font-bold mb-4 tracking-widest">Feedback Loops</h4>
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.blueprint.earlyTraction.feedbackLoops}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Paul Graham Framework: Iteration Cycle (Design Thinking) */}
+        {state.blueprint.iterationCycle && (
+          <div className="mb-16">
+            <h3 className="text-2xl text-slate-900 dark:text-white font-serif mb-2">Iteration Cycle</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Design Thinking stages: build, measure, learn, repeat.</p>
+            <div className="flex flex-col md:flex-row gap-4">
+              {[
+                { stage: 'Empathize', content: state.blueprint.iterationCycle.empathize, color: 'rose' },
+                { stage: 'Define', content: state.blueprint.iterationCycle.define, color: 'amber' },
+                { stage: 'Ideate', content: state.blueprint.iterationCycle.ideate, color: 'emerald' },
+                { stage: 'Prototype', content: state.blueprint.iterationCycle.prototype, color: 'blue' },
+                { stage: 'Test', content: state.blueprint.iterationCycle.test, color: 'purple' },
+              ].map((item, i) => (
+                <div key={i} className="flex-1 bg-white dark:bg-black border border-slate-200 dark:border-white/10 p-4 rounded-2xl relative">
+                  <div className={`w-8 h-8 bg-${item.color}-100 dark:bg-${item.color}-900/30 text-${item.color}-600 dark:text-${item.color}-400 rounded-full flex items-center justify-center text-sm font-bold mb-3`}>
+                    {i + 1}
+                  </div>
+                  <h4 className="text-sm text-slate-900 dark:text-white font-bold mb-2">{item.stage}</h4>
+                  <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">{item.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tech Stack */}
         <div className="mb-16">

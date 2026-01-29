@@ -35,6 +35,56 @@ export const ONBOARDING_SECTIONS: Section[] = [
   },
   {
     id: 2,
+    title: "Problems & Domain",
+    description: "Paul Graham says: scratch your own itch. What problems do you actually face?",
+    questions: [
+      {
+        id: "personal_frustration",
+        type: "text",
+        text: "What frustrates you daily that software should solve?",
+        helperText: "Think about your own workflow, habits, or pain points. The best startups solve problems the founder personally has."
+      },
+      {
+        id: "domain_expertise",
+        type: "select",
+        text: "What industry or domain do you know better than 95% of people?",
+        helperText: "Insider knowledge is your unfair advantage.",
+        options: [
+          { label: "Software/Tech", value: "Software Development & Technology" },
+          { label: "Finance/Trading", value: "Finance, Trading & Investing" },
+          { label: "Healthcare", value: "Healthcare & Medical" },
+          { label: "Education", value: "Education & Learning" },
+          { label: "E-commerce/Retail", value: "E-commerce & Retail" },
+          { label: "Media/Content", value: "Media, Content & Entertainment" },
+          { label: "Real Estate", value: "Real Estate & Property" },
+          { label: "Legal/Compliance", value: "Legal & Compliance" },
+          { label: "Other", value: "Other Industry" }
+        ]
+      },
+      {
+        id: "overlooked_problem",
+        type: "text",
+        text: "What simple problem have you noticed that others seem to ignore?",
+        helperText: "The best ideas are often obvious in retrospect. What's hiding in plain sight?"
+      },
+      {
+        id: "building_skills",
+        type: "select",
+        text: "What can you actually build yourself right now?",
+        helperText: "Be honest. This determines your MVP scope.",
+        options: [
+          { label: "Full-stack Apps", value: "Full-stack web applications" },
+          { label: "Frontend Only", value: "Frontend/UI with no-code backend" },
+          { label: "No-code Tools", value: "No-code tools (Bubble, Webflow, etc.)" },
+          { label: "AI/Prompts Only", value: "AI wrappers and prompt engineering" },
+          { label: "Content/Community", value: "Content, community, or audience building" },
+          { label: "Need Co-founder", value: "I need a technical co-founder" }
+        ]
+      }
+    ]
+  },
+  {
+    id: 3,
     title: "Passion & Emotional Energy",
     description: "We need to find what fuels you rather than drains you.",
     questions: [
@@ -66,7 +116,7 @@ export const ONBOARDING_SECTIONS: Section[] = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     title: "Reality & Resources",
     description: "Let's anchor this in the practical world.",
     questions: [
@@ -98,7 +148,7 @@ export const ONBOARDING_SECTIONS: Section[] = [
     ]
   },
   {
-    id: 4,
+    id: 5,
     title: "Risk Profile",
     description: "How much uncertainty can your nervous system handle?",
     questions: [
@@ -127,7 +177,7 @@ export const ONBOARDING_SECTIONS: Section[] = [
     ]
   },
   {
-    id: 5,
+    id: 6,
     title: "Aesthetics & Brand DNA",
     description: "How should this mission feel to the world?",
     questions: [
@@ -169,7 +219,7 @@ export const ONBOARDING_SECTIONS: Section[] = [
     ]
   },
   {
-    id: 6,
+    id: 7,
     title: "Ambition & Market",
     description: "Let's right-size the mission.",
     questions: [
@@ -198,7 +248,7 @@ export const ONBOARDING_SECTIONS: Section[] = [
     ]
   },
   {
-    id: 7,
+    id: 8,
     title: "Purpose & Truth",
     description: "The final check.",
     questions: [
@@ -239,23 +289,48 @@ export const ONBOARDING_SECTIONS: Section[] = [
   },
 ];
 
-export const SYSTEM_INSTRUCTION_BASE = `You are O'flock, a strategic co-founder AI specializing in the psychology of solopreneurship. 
-You are precise, analytical, and supportive. 
+export const SYSTEM_INSTRUCTION_BASE = `You are O'flock, a strategic co-founder AI specializing in the psychology of solopreneurship.
+You are precise, analytical, and supportive.
 You are capable of aggressive business strategy AND deep creative direction.
 Your tone is Serious, Sophisticated, and Direct.
 Do not use em dashes. Use commas, colons, or single hyphens.
 
+PAUL GRAHAM FRAMEWORK (CORE PHILOSOPHY):
+1. SCRATCH YOUR OWN ITCH: The best startup ideas come from problems the founder personally faces. Always prioritize ideas that solve the founder's stated frustrations over generic market opportunities.
+2. DOMAIN EXPERTISE: Generate ideas in fields the founder knows intimately. Leverage their insider knowledge as an unfair advantage.
+3. SIMPLE OVERLOOKED SOLUTIONS: Seek straightforward fixes that others have ignored. The best ideas are often obvious in retrospect.
+4. CRUDE V1 & ITERATE: The first version should be embarrassingly simple. Launch fast with core functionality only, then improve based on real user feedback.
+5. DO THINGS THAT DON'T SCALE: Early traction requires manual effort. Personal outreach, hand-holding users, founder-led sales. This is required, not optional.
+
+LEAN STARTUP INTEGRATION:
+- Every idea needs hypothesis validation through user interviews before building.
+- Define what success looks like with measurable metrics.
+- Build only what's needed to test the core assumption.
+
+DESIGN THINKING STAGES:
+- Empathize: Understand user pain deeply.
+- Define: Articulate the problem precisely.
+- Ideate: Generate multiple solutions.
+- Prototype: Build minimum testable version.
+- Test: Validate with real users, iterate or pivot.
+
 CORE DIRECTIVES:
 - If an idea fails utility, retention, or meaning, discard it and generate a better one.
 - Every mission must solve a real pain or fulfill a deep emotional/identity need.
+- PRIORITIZE founder-problem fit: If the founder stated a personal frustration, the idea MUST address it directly.
+- Validate domain fit: Ideas should leverage the founder's stated expertise.
 
 HARD BAN (REJECT ALL):
 - Purely aesthetic toys or visualizers without purpose.
 - One-time curiosity apps or "single-session novelty" tools.
 - Vague inspiration machines or generic chat wrappers.
 - "Beautiful but useless" implementations.
+- Ideas that don't connect to the founder's stated problems or expertise.
+- Ideas that require skills the founder explicitly said they lack.
 
 REQUIRED OUTPUT FOCUS:
 - Who it is for (clear psychological profile).
+- Why the FOUNDER specifically should build this (domain fit + personal problem).
 - Why they care emotionally and why they will return repeatedly.
-- What meaningful value it provides and its monetization potential.`;
+- What meaningful value it provides and its monetization potential.
+- How to validate this idea before building (Lean Canvas thinking).`;

@@ -87,6 +87,12 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
   const priority = answers['idea_prioritization'] || 'Balanced Strategy';
   const userAppName = answers['app_name_idea'] || '';
 
+  // Paul Graham Framework: Extract founder's personal context
+  const personalFrustration = answers['personal_frustration'] || '';
+  const domainExpertise = answers['domain_expertise'] || '';
+  const overlookedProblem = answers['overlooked_problem'] || '';
+  const buildingSkills = answers['building_skills'] || '';
+
   let strategyInstruction = "";
 
   if (priority.includes("Profit")) {
@@ -121,15 +127,44 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
     nameInstruction = `The user has suggested the name: "${userAppName}". Use this name (or a slight variation if needed to make it stronger) for the title.`;
   }
 
+  // Paul Graham Framework: Founder-centric idea generation
+  const paulGrahamInstruction = `
+    PAUL GRAHAM FRAMEWORK (MANDATORY):
+
+    1. SCRATCH YOUR OWN ITCH - The founder stated this personal frustration:
+       "${personalFrustration || 'Not specified'}"
+       ${personalFrustration ? 'The idea MUST directly address or relate to this frustration. This is non-negotiable.' : 'Generate an idea based on their psychological profile.'}
+
+    2. DOMAIN EXPERTISE - The founder's deep knowledge area:
+       "${domainExpertise || 'Not specified'}"
+       ${domainExpertise ? 'The idea should leverage this insider knowledge as an unfair advantage.' : ''}
+
+    3. OVERLOOKED PROBLEM - The founder noticed this ignored problem:
+       "${overlookedProblem || 'Not specified'}"
+       ${overlookedProblem ? 'Consider this insight. Simple solutions to overlooked problems often make the best startups.' : ''}
+
+    4. BUILDING SKILLS - The founder can build:
+       "${buildingSkills || 'Not specified'}"
+       ${buildingSkills ? 'The MVP MUST be buildable with these skills. Do not suggest ideas requiring skills they lack.' : ''}
+
+    VALIDATION CRITERIA:
+    - Does this idea solve a problem the founder personally experiences? (Required if they stated a frustration)
+    - Does this leverage the founder's domain expertise? (Strong preference)
+    - Can the founder actually build the MVP with their stated skills? (Required)
+    - Is this a simple solution that others have overlooked? (Preferred)
+  `;
+
   const prompt = `
     Based on the following psychological profile and user answers, generate ONE single business mission.
-    
+
+    ${paulGrahamInstruction}
+
     ${strategyInstruction}
     ${nameInstruction}
-    
+
     Profile: ${JSON.stringify(profile)}
     Original Answers: ${JSON.stringify(answers)}
-    
+
     Output a raw JSON object.
   `;
 
@@ -138,10 +173,10 @@ export const generateMission = async (profile: PsychologicalProfile, answers: Us
     properties: {
       title: { type: Type.STRING, description: "Bold, commercial, authoritative title." },
       coreConcept: { type: Type.STRING, description: "The product/service definition. Include the monetization model." },
-      whyFitsYou: { type: Type.STRING, description: "Who it is for (clear psychological profile) and why it fits the founder." },
+      whyFitsYou: { type: Type.STRING, description: "Who it is for (clear psychological profile) and why it fits the founder. MUST reference how this connects to their stated personal frustration and domain expertise." },
       sustainability: { type: Type.STRING, description: "Emotional connection: Why the founder cares and why users will return repeatedly." },
-      problemSolved: { type: Type.STRING, description: "Meaningful value: The specific problem being solved or the benefit given." },
-      yourRole: { type: Type.STRING, description: "The founder's high-leverage role in this ecosystem." },
+      problemSolved: { type: Type.STRING, description: "Meaningful value: The specific problem being solved. MUST connect to founder's stated frustration if provided." },
+      yourRole: { type: Type.STRING, description: "The founder's high-leverage role in this ecosystem, considering their stated building skills." },
     },
     required: ["title", "coreConcept", "whyFitsYou", "sustainability", "problemSolved", "yourRole"],
   };
@@ -178,6 +213,11 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
   const aestheticColor = answers['aesthetic_color'] || "Clean Minimalist";
   const buildComplexity = answers['build_complexity'] || "Functional MVP";
 
+  // Paul Graham Framework: Extract founder context for blueprint
+  const personalFrustration = answers['personal_frustration'] || '';
+  const domainExpertise = answers['domain_expertise'] || '';
+  const buildingSkills = answers['building_skills'] || '';
+
   let strategyContext = "";
   if (priority.includes("Profit")) {
     strategyContext = "STRATEGY: PROFIT FIRST. clearly monetizable, practical, SaaS-ready, subscription-friendly, financially solid. Price target $10-$35/mo. Discard gimmicks immediately.";
@@ -187,17 +227,32 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
     strategyContext = "STRATEGY: BALANCED. creativity + practicality. Something beautiful AND realistically monetizable. Avoid one-time-wow tools.";
   }
 
+  const paulGrahamBlueprintContext = `
+    PAUL GRAHAM FRAMEWORK CONTEXT:
+    - Founder's Personal Frustration: "${personalFrustration || 'Not specified'}"
+    - Founder's Domain Expertise: "${domainExpertise || 'Not specified'}"
+    - Founder's Building Skills: "${buildingSkills || 'Not specified'}"
+
+    Apply these principles in the blueprint:
+    1. MVP should be the CRUDEST possible version that tests the core hypothesis
+    2. Early traction MUST include manual, unscalable tactics (founder-led outreach, personal demos)
+    3. Include Lean Canvas validation steps before heavy building
+    4. Frame the action plan around learning, not just building
+  `;
+
   const prompt = `
     Create a detailed execution blueprint for this mission: "${mission.title}".
-    
+
     Context:
     Mission: ${JSON.stringify(mission)}
     Profile: ${JSON.stringify(profile)}
     User Aesthetics: Font=${aestheticFont}, Color=${aestheticColor}
     Strategy: ${strategyContext}
-    
+
+    ${paulGrahamBlueprintContext}
+
     ${SYSTEM_COMPONENTS_REFERENCE}
-    
+
     REQUIREMENTS:
 
     1. Action Plan: A 30-day plan.
@@ -253,6 +308,34 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
     5. Tech Stack: A list of 4-6 specific technologies/platforms recommended for this mission.
        - Each item MUST have a 'name', the 'domain' of the tool (e.g. nextjs.org), and a concise 'purpose' (e.g. "Primary Framework", "Authentication & Database", "Transactional Email").
        - Focus on modern, high-leverage tools (e.g., Supabase, PostHog, Vercel, Resend).
+
+    6. LEAN CANVAS (Paul Graham Validation Framework):
+       - Problem: Top 3 problems/hypotheses to validate with users BEFORE building
+       - Customer Segments: Specific early adopter profile (not broad market)
+       - Unique Value Proposition: One clear sentence
+       - Solution: Top 3 MVP features only
+       - Unfair Advantage: What the founder has that can't be copied (domain expertise, audience, etc.)
+       - Revenue Streams: Specific pricing model
+       - Cost Structure: Key costs to track
+       - Key Metrics: 3-5 numbers that indicate success
+       - Channels: Specific paths to reach early adopters
+
+    7. EARLY TRACTION TACTICS ("Do Things That Don't Scale"):
+       - Manual Outreach: 5 specific actions to find first 10 users (NOT ads or content marketing)
+       - Personal Onboarding: Exactly how to onboard each of the first 10 users by hand
+       - Founder Selling: How the founder personally sells/demos to early users
+       - Community Engagement: Specific communities/forums/groups to engage with
+       - Feedback Loops: How to collect and act on user feedback weekly
+
+    8. ITERATION CYCLE (Design Thinking):
+       - Empathize: How to deeply understand user pain (interviews, shadowing, etc.)
+       - Define: How to refine the problem statement based on learnings
+       - Ideate: Approach to brainstorming solutions with users
+       - Prototype: What quick prototypes to build for testing
+       - Test: How to validate with users before committing to code
+
+    9. FOUNDER-PROBLEM FIT:
+       - A paragraph explaining exactly how this mission connects to the founder's stated personal frustration and domain expertise. Why is THIS founder uniquely positioned to solve THIS problem?
 
     Output a raw JSON object.
   `;
@@ -315,9 +398,48 @@ export const generateBlueprint = async (mission: Mission, profile: Psychological
           required: ["name", "domain", "purpose"]
         },
         description: "List of recommended technologies with their domains for logo fetching."
-      }
+      },
+      // Paul Graham Framework additions
+      leanCanvas: {
+        type: Type.OBJECT,
+        properties: {
+          problem: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Top 3 problems/hypotheses to validate" },
+          customerSegments: { type: Type.STRING, description: "Specific early adopter profile" },
+          uniqueValueProp: { type: Type.STRING, description: "One clear value proposition sentence" },
+          solution: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Top 3 MVP features only" },
+          unfairAdvantage: { type: Type.STRING, description: "What the founder has that can't be copied" },
+          revenueStreams: { type: Type.STRING, description: "Specific pricing model" },
+          costStructure: { type: Type.STRING, description: "Key costs to track" },
+          keyMetrics: { type: Type.ARRAY, items: { type: Type.STRING }, description: "3-5 success metrics" },
+          channels: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Paths to reach early adopters" }
+        },
+        required: ["problem", "customerSegments", "uniqueValueProp", "solution", "unfairAdvantage", "revenueStreams", "costStructure", "keyMetrics", "channels"]
+      },
+      earlyTraction: {
+        type: Type.OBJECT,
+        properties: {
+          manualOutreach: { type: Type.ARRAY, items: { type: Type.STRING }, description: "5 specific actions to find first 10 users" },
+          personalOnboarding: { type: Type.STRING, description: "How to onboard first 10 users by hand" },
+          founderSelling: { type: Type.STRING, description: "How founder personally sells/demos" },
+          communityEngagement: { type: Type.STRING, description: "Specific communities to engage with" },
+          feedbackLoops: { type: Type.STRING, description: "How to collect and act on feedback" }
+        },
+        required: ["manualOutreach", "personalOnboarding", "founderSelling", "communityEngagement", "feedbackLoops"]
+      },
+      iterationCycle: {
+        type: Type.OBJECT,
+        properties: {
+          empathize: { type: Type.STRING, description: "How to understand user pain deeply" },
+          define: { type: Type.STRING, description: "How to refine the problem statement" },
+          ideate: { type: Type.STRING, description: "Approach to brainstorming with users" },
+          prototype: { type: Type.STRING, description: "Quick prototypes to build for testing" },
+          test: { type: Type.STRING, description: "How to validate before committing to code" }
+        },
+        required: ["empathize", "define", "ideate", "prototype", "test"]
+      },
+      founderProblemFit: { type: Type.STRING, description: "Why THIS founder is uniquely positioned to solve THIS problem" }
     },
-    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack"],
+    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack", "leanCanvas", "earlyTraction", "iterationCycle", "founderProblemFit"],
   };
 
   try {
@@ -431,9 +553,48 @@ export const refineBlueprint = async (
           },
           required: ["name", "domain", "purpose"]
         }
-      }
+      },
+      // Paul Graham Framework additions (optional for refinement)
+      leanCanvas: {
+        type: Type.OBJECT,
+        properties: {
+          problem: { type: Type.ARRAY, items: { type: Type.STRING } },
+          customerSegments: { type: Type.STRING },
+          uniqueValueProp: { type: Type.STRING },
+          solution: { type: Type.ARRAY, items: { type: Type.STRING } },
+          unfairAdvantage: { type: Type.STRING },
+          revenueStreams: { type: Type.STRING },
+          costStructure: { type: Type.STRING },
+          keyMetrics: { type: Type.ARRAY, items: { type: Type.STRING } },
+          channels: { type: Type.ARRAY, items: { type: Type.STRING } }
+        },
+        required: ["problem", "customerSegments", "uniqueValueProp", "solution", "unfairAdvantage", "revenueStreams", "costStructure", "keyMetrics", "channels"]
+      },
+      earlyTraction: {
+        type: Type.OBJECT,
+        properties: {
+          manualOutreach: { type: Type.ARRAY, items: { type: Type.STRING } },
+          personalOnboarding: { type: Type.STRING },
+          founderSelling: { type: Type.STRING },
+          communityEngagement: { type: Type.STRING },
+          feedbackLoops: { type: Type.STRING }
+        },
+        required: ["manualOutreach", "personalOnboarding", "founderSelling", "communityEngagement", "feedbackLoops"]
+      },
+      iterationCycle: {
+        type: Type.OBJECT,
+        properties: {
+          empathize: { type: Type.STRING },
+          define: { type: Type.STRING },
+          ideate: { type: Type.STRING },
+          prototype: { type: Type.STRING },
+          test: { type: Type.STRING }
+        },
+        required: ["empathize", "define", "ideate", "prototype", "test"]
+      },
+      founderProblemFit: { type: Type.STRING }
     },
-    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack"],
+    required: ["actionPlan", "mvpPlan", "marketingStrategy", "branding", "emotionalAnchor", "executionLayer", "prompts", "techStack", "leanCanvas", "earlyTraction", "iterationCycle", "founderProblemFit"],
   };
 
   try {
