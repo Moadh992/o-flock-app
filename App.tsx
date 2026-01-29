@@ -1156,12 +1156,33 @@ export default function App() {
         // Show loading state
         setState(prev => ({ ...prev, isLoading: true }));
 
+        // Hide elements that shouldn't appear in PDF
+        const hideForPdf = element.querySelectorAll('[data-hide-pdf]');
+        hideForPdf.forEach(el => (el as HTMLElement).style.display = 'none');
+
+        // Also hide any fixed-positioned elements within the content
+        const fixedElements = element.querySelectorAll('.fixed');
+        fixedElements.forEach(el => (el as HTMLElement).style.display = 'none');
+
+        // Temporarily expand the element to capture full content
+        const originalStyle = element.getAttribute('style') || '';
+        element.style.maxWidth = 'none';
+        element.style.width = '900px';
+
         const canvas = await html2canvas(element, {
           scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: document.documentElement.classList.contains('dark') ? '#000000' : '#ffffff',
+          logging: false,
+          windowWidth: 1200,
+          scrollY: -window.scrollY,
         });
+
+        // Restore hidden elements
+        hideForPdf.forEach(el => (el as HTMLElement).style.display = '');
+        fixedElements.forEach(el => (el as HTMLElement).style.display = '');
+        element.setAttribute('style', originalStyle);
 
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF({
@@ -1174,31 +1195,35 @@ export default function App() {
         const pdfHeight = pdf.internal.pageSize.getHeight();
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
-        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+
+        // Calculate ratio to fit width with margins
+        const margin = 10;
+        const contentWidth = pdfWidth - (margin * 2);
+        const ratio = contentWidth / imgWidth;
 
         // Calculate total pages needed
         const scaledHeight = imgHeight * ratio;
-        const pageHeight = pdfHeight - 20; // Leave some margin
-        const totalPages = Math.ceil(scaledHeight / pageHeight);
+        const pageContentHeight = pdfHeight - (margin * 2);
+        const totalPages = Math.ceil(scaledHeight / pageContentHeight);
 
         for (let page = 0; page < totalPages; page++) {
           if (page > 0) {
             pdf.addPage();
           }
 
-          const srcY = (page * pageHeight * imgWidth) / (pdfWidth);
-          const srcHeight = Math.min((pageHeight * imgWidth) / pdfWidth, imgHeight - srcY);
+          // Calculate source position in original canvas
+          const srcY = (page * pageContentHeight) / ratio;
+          const srcHeight = Math.min(pageContentHeight / ratio, imgHeight - srcY);
 
           // Create a temporary canvas for this page segment
           const pageCanvas = document.createElement('canvas');
           pageCanvas.width = imgWidth;
-          pageCanvas.height = srcHeight;
+          pageCanvas.height = Math.ceil(srcHeight);
           const ctx = pageCanvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(canvas, 0, srcY, imgWidth, srcHeight, 0, 0, imgWidth, srcHeight);
             const pageImgData = pageCanvas.toDataURL('image/png');
-            pdf.addImage(pageImgData, 'PNG', imgX, 10, imgWidth * ratio, srcHeight * ratio);
+            pdf.addImage(pageImgData, 'PNG', margin, margin, contentWidth, srcHeight * ratio);
           }
         }
 
@@ -1221,7 +1246,7 @@ export default function App() {
           <p className="text-xl md:text-3xl font-sans font-medium leading-relaxed">"{state.blueprint.emotionalAnchor}"</p>
 
           {/* Save CTA for Authenticated User High Value Action */}
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center" data-hide-pdf>
             <button
               onClick={triggerSave}
               className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-100 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
@@ -1248,7 +1273,7 @@ export default function App() {
               <span className="bg-slate-900 dark:bg-white text-white dark:text-black w-6 h-6 rounded flex items-center justify-center text-xs font-bold">A</span>
               30-Day Action Plan
             </h3>
-            <div className="flex gap-2">
+            <div className="flex gap-2" data-hide-pdf>
               <Button variant="secondary" onClick={exportToPdf} className="text-xs py-2 px-4 h-auto gap-2 dark:!bg-white dark:!text-black dark:!border-white dark:hover:!bg-slate-200 shadow-lg shadow-black/20">
                 <PdfIcon /> Export PDF
               </Button>
@@ -1554,7 +1579,7 @@ export default function App() {
 
 
         {/* Product Hunt Launch Card */}
-        <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-500/20 p-6 md:p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-500/20 p-6 md:p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-6" data-hide-pdf>
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-[#FF6154] rounded-full flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-3xl pb-1">P</span>
@@ -1574,7 +1599,7 @@ export default function App() {
 
 
         {/* Concierge Build CTA */}
-        <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+        <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl mb-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl" data-hide-pdf>
           <div className="flex-1 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <span className="inline-block px-3 py-1 bg-amber-400 text-slate-900 text-[10px] font-bold tracking-widest uppercase rounded-full">Concierge</span>
