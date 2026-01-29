@@ -77,25 +77,20 @@ const WindsurfIcon = () => (
   </svg>
 );
 
-const LovableIcon = () => (
-  <svg viewBox="0 0 121 122" className="w-5 h-5 transition-opacity" xmlns="http://www.w3.org/2000/svg">
-    <mask id="b_app" width="121" height="122" x="0" y="0" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }}><path fill="url(#a_app)" fillRule="evenodd" d="M36.069 0c19.92 0 36.068 16.155 36.068 36.084v13.713h12.004c19.92 0 36.069 16.156 36.069 36.084 0 19.928-16.149 36.083-36.069 36.083H0v-85.88C0 16.155 16.148 0 36.069 0Z" clipRule="evenodd" /></mask>
-    <g mask="url(#b_app)">
-      <ellipse cx="52.738" cy="65.101" fill="#4B73FF" rx="81.373" ry="81.192" />
-      <ellipse cx="61.673" cy="20.547" fill="#FF66F4" rx="104.216" ry="81.192" />
-      <ellipse cx="78.666" cy="5.268" fill="#FF0105" rx="81.373" ry="71.304" />
-      <ellipse cx="63.121" cy="20.527" fill="#FE7B02" rx="48.937" ry="48.829" />
-    </g>
-    <defs>
-      <linearGradient id="a_app" x1="40.453" x2="76.933" y1="21.433" y2="121.971" gradientUnits="userSpaceOnUse"><stop offset=".025" stopColor="#FF8E63" /><stop offset=".56" stopColor="#FF7EB0" /><stop offset=".95" stopColor="#4B73FF" /></linearGradient>
-    </defs>
-  </svg>
+const ClaudeIcon = () => (
+  <img
+    src="https://img.logo.dev/anthropic.com?token=pk_YBlqx6vUR_mo5wCxEWUzXw"
+    alt="Claude"
+    className="w-5 h-5 object-contain"
+  />
 );
 
-const ReplitIcon = () => (
-  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
-    <path d="M2 1.5A1.5 1.5 0 0 1 3.5 0h7A1.5 1.5 0 0 1 12 1.5V7H3.5A1.5 1.5 0 0 1 2 5.5v-4zM12 8.5V14h8.5a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5V8.5zM2 18.5a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5V24H3.5A1.5 1.5 0 0 1 2 22.5v-4z" />
-  </svg>
+const ZedIcon = () => (
+  <img
+    src="https://img.logo.dev/zed.dev?token=pk_YBlqx6vUR_mo5wCxEWUzXw"
+    alt="Zed"
+    className="w-5 h-5 object-contain"
+  />
 );
 
 const PdfIcon = () => (
@@ -1306,25 +1301,63 @@ export default function App() {
           </div>
         </div>
 
+        {/* Idea Explanation */}
+        {state.mission && (
+          <div className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold">i</span>
+              <h3 className="text-2xl md:text-3xl text-slate-900 dark:text-white font-serif font-bold">The Idea in Detail</h3>
+            </div>
+            <div className="bg-gradient-to-br from-slate-50 to-white dark:from-slate-900/50 dark:to-black border border-slate-200 dark:border-white/10 p-6 md:p-10 rounded-2xl shadow-sm">
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-xs text-purple-600 dark:text-purple-400 uppercase font-bold mb-3 tracking-widest">Core Concept</h4>
+                  <p className="text-slate-800 dark:text-slate-200 text-lg leading-relaxed">{state.mission.coreConcept}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-xs text-indigo-600 dark:text-indigo-400 uppercase font-bold mb-3 tracking-widest">Problem Solved</h4>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.mission.problemSolved}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs text-blue-600 dark:text-blue-400 uppercase font-bold mb-3 tracking-widest">Your Role</h4>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.mission.yourRole}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-xs text-emerald-600 dark:text-emerald-400 uppercase font-bold mb-3 tracking-widest">Why It Fits You</h4>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.mission.whyFitsYou}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs text-amber-600 dark:text-amber-400 uppercase font-bold mb-3 tracking-widest">Sustainability</h4>
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{state.mission.sustainability}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tools */}
         <div className="mb-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-              <h3 className="text-3xl text-slate-900 dark:text-white font-serif font-bold">Vibecoding Integration</h3>
+              <h3 className="text-3xl text-slate-900 dark:text-white font-serif font-bold">Engineering Integration</h3>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Optimized build prompts for the most powerful AI development tools.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <ToolCard
-              renderLogo={ReplitIcon}
-              name="Replit"
+              renderLogo={ClaudeIcon}
+              name="Claude"
               prompt={state.blueprint.prompts.replit}
             />
             <ToolCard
-              renderLogo={LovableIcon}
-              name="Lovable"
-              prompt={state.blueprint.prompts.lovable}
+              renderLogo={ZedIcon}
+              name="Zed IDE"
+              prompt={state.blueprint.prompts.replit}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

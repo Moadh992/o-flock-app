@@ -123,22 +123,23 @@ const WindsurfIcon = () => (
     </svg>
 );
 
-const LovableIcon = () => (
-    <svg viewBox="0 0 121 122" className="w-5 h-5 opacity-40 group-hover:opacity-80 transition-opacity" xmlns="http://www.w3.org/2000/svg">
-        <mask id="b" width="121" height="122" x="0" y="0" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }}><path fill="url(#a)" fillRule="evenodd" d="M36.069 0c19.92 0 36.068 16.155 36.068 36.084v13.713h12.004c19.92 0 36.069 16.156 36.069 36.084 0 19.928-16.149 36.083-36.069 36.083H0v-85.88C0 16.155 16.148 0 36.069 0Z" clipRule="evenodd" /></mask>
-        <g mask="url(#b)">
-            <ellipse cx="52.738" cy="65.101" fill="#4B73FF" rx="81.373" ry="81.192" />
-            <ellipse cx="61.673" cy="20.547" fill="#FF66F4" rx="104.216" ry="81.192" />
-            <ellipse cx="78.666" cy="5.268" fill="#FF0105" rx="81.373" ry="71.304" />
-            <ellipse cx="63.121" cy="20.527" fill="#FE7B02" rx="48.937" ry="48.829" />
-        </g>
-        <defs>
-            <linearGradient id="a" x1="40.453" x2="76.933" y1="21.433" y2="121.971" gradientUnits="userSpaceOnUse"><stop offset=".025" stopColor="#FF8E63" /><stop offset=".56" stopColor="#FF7EB0" /><stop offset=".95" stopColor="#4B73FF" /></linearGradient>
-        </defs>
-    </svg>
+const ClaudeIcon = () => (
+    <img
+        src="https://img.logo.dev/anthropic.com?token=pk_YBlqx6vUR_mo5wCxEWUzXw"
+        alt="Claude"
+        className="w-5 h-5 object-contain opacity-60 group-hover:opacity-100 transition-opacity"
+    />
 );
 
-const VibecodingStack: React.FC = () => {
+const ZedIcon = () => (
+    <img
+        src="https://img.logo.dev/zed.dev?token=pk_YBlqx6vUR_mo5wCxEWUzXw"
+        alt="Zed"
+        className="w-5 h-5 object-contain opacity-60 group-hover:opacity-100 transition-opacity"
+    />
+);
+
+const EngineeringStack: React.FC = () => {
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -146,11 +147,15 @@ const VibecodingStack: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center gap-3"
         >
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Built for the Vibecoding Era</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Engineering Integration</span>
             <div className="flex items-center gap-6">
-                <div className="group flex items-center gap-2" title="Lovable">
-                    <LovableIcon />
-                    <span className="text-xs font-medium text-zinc-600 group-hover:text-zinc-400 transition-colors">Lovable</span>
+                <div className="group flex items-center gap-2" title="Claude">
+                    <ClaudeIcon />
+                    <span className="text-xs font-medium text-zinc-600 group-hover:text-zinc-400 transition-colors">Claude</span>
+                </div>
+                <div className="group flex items-center gap-2" title="Zed IDE">
+                    <ZedIcon />
+                    <span className="text-xs font-medium text-zinc-600 group-hover:text-zinc-400 transition-colors">Zed IDE</span>
                 </div>
                 <div className="group flex items-center gap-2" title="Cursor">
                     <CursorIcon />
@@ -328,7 +333,7 @@ export const ProductHuntLanding: React.FC<LandingProps> = ({ onStart, onLogin })
                         </Button>
                     </motion.div>
 
-                    <VibecodingStack />
+                    <EngineeringStack />
 
 
 
