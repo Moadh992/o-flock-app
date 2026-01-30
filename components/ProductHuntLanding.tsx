@@ -333,6 +333,23 @@ export const ProductHuntLanding: React.FC<LandingProps> = ({ onStart, onLogin })
                         </Button>
                     </motion.div>
 
+                    <motion.a
+                        href="https://www.producthunt.com/products/o-flock?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-o-flock"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="inline-block mb-8"
+                    >
+                        <img
+                            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1070499&theme=light&t=1769777614465"
+                            alt="O'flock - Discover your mission through deep self-reflection | Product Hunt"
+                            width="250"
+                            height="54"
+                        />
+                    </motion.a>
+
                     <EngineeringStack />
 
 
@@ -399,25 +416,6 @@ export const ProductHuntLanding: React.FC<LandingProps> = ({ onStart, onLogin })
                     </p>
                 </motion.div>
 
-                {/* Live Stats Strip */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 border-y border-white/5 py-16">
-                    {[
-                        { label: "Founders Analyzed", value: "12,403" },
-                        { label: "Completion Rate", value: "94%" },
-                        { label: "Matches Found", value: "8,921" },
-                        { label: "Venture Backed", value: "32%" }
-                    ].map((stat, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                            <div className="text-4xl md:text-5xl font-serif text-white mb-2">{stat.value}</div>
-                            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">{stat.label}</div>
-                        </motion.div>
-                    ))}
-                </div>
             </section>
 
             {/* Generated Ideas Spinner */}
