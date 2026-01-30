@@ -334,7 +334,7 @@ export const ProductHuntLanding: React.FC<LandingProps> = ({ onStart, onLogin })
                     </motion.div>
 
                     <motion.a
-                        href="https://www.producthunt.com/products/o-flock?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-o-flock"
+                        href="https://www.producthunt.com/products/o-flock-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-o-flock-2"
                         target="_blank"
                         rel="noopener noreferrer"
                         initial={{ opacity: 0, y: 10 }}
@@ -343,7 +343,7 @@ export const ProductHuntLanding: React.FC<LandingProps> = ({ onStart, onLogin })
                         className="inline-block mb-8"
                     >
                         <img
-                            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1070499&theme=light&t=1769777614465"
+                            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1070509&theme=light&t=1769779297498"
                             alt="O'flock - Discover your mission through deep self-reflection | Product Hunt"
                             width="250"
                             height="54"
