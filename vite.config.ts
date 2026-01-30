@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
-        allowedHosts: ["o-flock-app.onrender.com", "o-flock-app-a5os.onrender.com", "oflok.com"],
+        allowedHosts: ["o-flock-app.onrender.com", "o-flock-app-a5os.onrender.com", "oflok.com", "o-flock-app-aacxoh.cranl.net"],
       },
       plugins: [react()],
       define: {
