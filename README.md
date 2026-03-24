@@ -1,37 +1,57 @@
-IyBPJ0Zsb2NrIEFwcCAx77iPCgpP4oCZRmxvY2sgaXMgYW4gQUktcG93ZXJl
-ZCBidXNpbmVzcyBpZGVhdGlvbiBhbmQgZXhlY3V0aW9uIHBsYW5uaW5nIHBs
-YXRmb3JtLiBJdCBoZWxwcyBhbWJpdGlvdXMgYnVpbGRlcnMgdG9ybiByYXcg
-aWRlYXMgaW50byBjb21wcmVoZW5zaXZlIGV4ZWN1dGlvbiBibHVlcHJpbnRz
-LCBjb3ZlcmluZyBtYXJrZXRpbmcsIGFjdGlvbiBwbGFucywgYW5kIGJ1c2lu
-ZXNzIHN0cmF0ZWd5LgoKIyMg8J+fbiBGZWF0dXJlcyoKCi0gKipBSS1Ecml2
-ZW4gQmx1ZXByaW50cyoqOiBHZW5lcmF0ZSBmdWxsIGV4ZWN1dGlvbiBwbGFu
-cyBmcm9tIGEgYmFzaWMgYnVzaW5lc3MgY29uY2VwdCB1c2luZyBHb29nbGUn
-cyBHZW1pbmkgQUkuCi0gKipNaXNzaW9uIE1hbmFnZW1lbnQqKjogU2F2ZSwg
-b3JnYW5pemUsIGFuZCB0cmFjayB5b3VyIGJ1c2luZXNzIG1pc3Npb25zLgot
-ICoqUHJvZHVjdGlvbi1SZWFkeSBCYWNrZW5kKio6IFBvd2VyZWQgYnkgU3Vw
-YWJhc2UgZm9yIHNlY3VyZSBhdXRoZW50aWNhdGlvbiwgcmVhbC10aW1lIGRh
-dGFiYXNlLCBhbmQgUkxTIHBvbGljaWVzLgotICoqU3Vic2NyaXB0aW9uIFN5
-c3RlbSoqOiBJbnRlZ3JhdGVkIHdpdGggUG9sYXIuc2ggZm9yIGZyZWVtaXVt
-IGxpbWl0cyBhbmQgcGF5bWVudHMKLSAqKk1vZGVybiBVSS9VWCoqOiBCdWls
-dCB3aXRoIFJlYWN0IDE5LCBUYWlsd2luZCBDU1MsIGFuZCBGcmFtZXIgTW90
-aW9uIGZvciBhIHByZW1pdW0gZXhwZXJpZW5jZS4KCiMjIOKEmSBVcHBlciBD
-YXNlIFRlY2ggU3RhY2sKCi0gKipGcm9udGVuZCoqOiBSZWFjdCAxOSwgVml0
-ZSwgVHlwZVNjcmlwdAotICoqQmFja2VuZCoqOiBTdXBhYmFzZSAoQXV0aCwg
-REIsIFJMUykKLSAqKlBheW1lbnRzKio6IFBvbGFyLnNoIFNESwotICoqQUkg
-SW50ZWdyYXRpb24qKjogR29vZ2xlIEdlbWluaSAoQGdvb2dsZS9nZW5haSkK
-LSAqKlN0eWxpbmcgJiBBbmltYXRpb24qKjogVGFpbHdpbmQgQ1NTLCBGcmFt
-ZXIgTW90aW9uLCBMdWNpZGUgUmVhY3QoSWNvbnMpCgojIyDwnpOiIEdldHRp
-bmcgU3RhcnRlZAoKIyMjIFByZXJlcXVpc2l0ZXMKCi0gTm9kZS5qcyAodjE4
-IG9yIGhpZ2hlcikKLSBTdXBhYmFzZSBBY2NvdW50Ci0gR29vZ2xlIEdlbWlu
-aSBBUEkgS2V5CgojIyMgU2V0dXAKCjEuICoqQ2xvbmUgdGhlIHJlcG8qKjoK
-ICAgYmFzaAogICBnaXQgY2xvbmUgaHR0cHM6Ly9naXRodWIuY29tL01vYWRo
-OTkyL28tZmxvY2stYXBwLmdpdAogICBjZC8gby1mbG9jay1hcHAKICAgCjIu
-ICoqSW5zdGFsbCBkZXBlbmRlbmNpZXMqKjoKICAgYmFzaAogICBucG0gaW5z
-dGFsbAogICAKMy4gKipDb25maWd1cmUgZW52aXJvbm1lbnQgdmFyaWFibGVz
-Kio6CiAgIENyZWF0ZSBhIGAuZW52YCBmaWxlIGluIHRoZSByb290IGRpcmVj
-dG9yeTogCiAgIGVudgogICBWSVRFX1NVUEFCQVNFX1VSTD15b3VyX3N1cGFi
-YXNlX3VybAogICBWSVRFX1NVUEFCQVNFX0FOT05fS0VZPXlvdXJfc3VwYWJh
-c2VfYW5vbl9rZXkKICAgR0VNSU5JX0FQSV9LRVk9eW91cl9nZW1pbmlfYXBp
-X2tleQogICAKNC4gKipSdW4gdGhlIGRldiBzZXJ2ZXIqKjoKICAgYmFzaAog
-ICBucG0gcnVuIGRldgogICAKLS0tCgpCdWlsdCB3aXRoIOKdpSBieSBBZG8g
-KEBNb2FkaDk5MikK
+# O'Flock App 🚀
+
+O’Flock is an AI-powered business ideation and execution planning platform. It helps ambitious builders turn raw ideas into comprehensive execution blueprints, covering marketing, action plans, and business strategy.
+
+## 🌟 Features
+
+- **AI-Driven Blueprints**: Generate full execution plans from a basic business concept using Google's Gemini AI.
+- **Mission Management**: Save, organize, and track your business missions.
+- **Production-Ready Backend**: Powered by Supabase for secure authentication, real-time database, and RLS policies.
+- **Subscription System**: Integrated with Polar.sh for freemium limits and payments.
+- **Modern UI/UX**: Built with React 19, Tailwind CSS, and Framer Motion for a premium experience.
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 19, Vite, TypeScript
+- **Backend**: Supabase (Auth, DB, RLS)
+- **Payments**: Polar.sh SDK
+- **AI Integration**: Google Gemini (@google/generative-ai)
+- **Styling & Animation**: Tailwind CSS, Framer Motion, Lucide React (Icons)
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- Supabase Account
+- Google Gemini API Key
+
+### Setup
+
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/Moadh992/o-flock-app.git
+   cd o-flock-app
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**:
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+4. **Run the dev server**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+Built with ❤️ by Ado (@Moadh992)
